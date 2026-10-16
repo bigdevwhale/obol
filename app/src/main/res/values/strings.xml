@@ -130,7 +130,8 @@
     <string name="why_thing">I\'m looking for something</string>
     <string name="gate_breathe">Breathe. Charon is in no hurry.</string>
     <string name="gate_balance">In your purse: %1$s</string>
-    <string name="gate_price">A minute costs %1$s obol now</string>
+    <string name="gate_price">Now %1$s obol/min</string>
+    <string name="line_temple_sub">laid aside, not spent</string>
     <string name="gate_night">Nyx\'s hour: %1$s</string>
     <string name="gate_morning">Early morning: %1$s</string>
     <string name="gate_climb">Crossing number %1$d today: %2$s</string>
@@ -204,6 +205,78 @@
     <string name="lang_system">System</string>
     <string name="settings_about">Obol %1$s · part of Stillcraft · no ads, no account, works offline</string>
 
+    <!-- Island -->
+    <string name="channel_crossing">On the far shore</string>
+    <string name="channel_crossing_desc">The time left of a paid crossing, in the status bar and the island.</string>
+    <string name="island_left">%1$s on the far shore</string>
+    <string name="island_meter">By the meter: %1$s a minute · %2$s in the purse</string>
+    <string name="settings_badge">Timer plaque over apps</string>
+    <string name="settings_badge_help">The notification with the time left shows anyway; on Xiaomi it lives in the Super Island.</string>
+
+    <!-- Temple, oracle, mist, oath, widget -->
+    <string name="channel_oracle">The oracle</string>
+    <string name="oracle_title">The oracle has spoken</string>
+    <string name="oracle_text">%1$s pays double until %2$s.</string>
+    <string name="oracle_eyebrow">The oracle</string>
+    <string name="oracle_now">%1$s pays double right now, until %2$s.</string>
+    <string name="oracle_later">%1$s will pay double from %2$s to %3$s.</string>
+    <string name="oracle_past">The double hours of %1$s are over for today.</string>
+    <string name="styx_warning">You swore by the Styx until %1$s. Breaking the oath stays on record.</string>
+    <string name="styx_explanation">While the oath holds, Obol can\'t be uninstalled. Obol asks for no other rights.</string>
+    <string name="widget_name">Purse</string>
+    <string name="widget_desc">Obols in your purse and today\'s given and taken.</string>
+    <string name="widget_today">today +%1$s · −%2$s</string>
+    <string name="temple_title">Temple</string>
+    <string name="temple_sub">Obols kept here are out of Charon\'s reach. The treasury grows every Monday; vows save up for real rewards.</string>
+    <string name="temple_treasury">Treasury</string>
+    <string name="temple_interest">%1$d%% a week: +%2$s on Monday, %3$s</string>
+    <string name="temple_deposit">Put in</string>
+    <string name="temple_withdraw">Take out</string>
+    <string name="temple_all">all</string>
+    <string name="temple_vows">Vows</string>
+    <string name="temple_vows_sub">A reward in real life, paid for in obols: a cinema, a book, a dinner out.</string>
+    <string name="temple_new_vow">Make a vow</string>
+    <string name="temple_vow_make">Vow</string>
+    <string name="vow_hint">Cinema on Saturday</string>
+    <string name="vow_target">For how many obols</string>
+    <string name="vow_progress">%1$s of %2$s</string>
+    <string name="vow_kept">Kept. Enjoy it.</string>
+    <string name="vow_broken">Broken</string>
+    <string name="vow_offer">Lay aside</string>
+    <string name="vow_keep">Keep the vow</string>
+    <string name="vow_break">Break</string>
+    <string name="vow_break_title">Break the vow?</string>
+    <string name="vow_break_text">The %1$s obols laid aside go back to the purse.</string>
+    <string name="memory_eyebrow">From the far shore</string>
+    <string name="memory_question">%1$s on the far shore today. What do you remember?</string>
+    <string name="memory_hint">A recipe, a joke, a friend\'s news…</string>
+    <string name="memory_nothing">Nothing</string>
+    <string name="shore_temple">Treasury: %1$s · open vows: %2$d</string>
+    <string name="shore_oath">Sworn by the Styx until %1$s</string>
+    <string name="shore_oath_broken">The oath by the Styx was broken on %1$s</string>
+    <string name="patron_cracked">Neglected for over a week</string>
+    <string name="line_temple">Temple</string>
+    <string name="ledger_forgotten">Taken by Lethe without a trace: %1$s</string>
+    <string name="ledger_memory">Remembered: %1$s</string>
+    <string name="ledger_memory_nothing">Nothing was remembered from the far shore.</string>
+    <string name="settings_locked">Tariffs, the gate and the debt are locked by the oath by the Styx.</string>
+    <string name="settings_temple">Temple and oracle</string>
+    <string name="settings_oracle">The oracle</string>
+    <string name="settings_oracle_help">Each day one patron pays double for two hours.</string>
+    <string name="settings_mist">Mist of Lethe</string>
+    <string name="settings_mist_help">After five minutes on the far shore a grey haze creeps in from the edges of the screen.</string>
+    <string name="settings_interest">Treasury interest a week</string>
+    <string name="settings_oath">Oath by the Styx</string>
+    <string name="settings_oath_help">The unbreakable oath of the gods. Obol can\'t be uninstalled, tariffs and the gate are locked, streams can only get dearer. Breaking it is possible, but stays on record.</string>
+    <string name="settings_oath_swear">Swear by the Styx</string>
+    <string name="settings_oath_until">Sworn until %1$s</string>
+    <string name="settings_oath_holding">The oath ends by itself.</string>
+    <string name="settings_oath_broken">Last oath broken on %1$s</string>
+    <string name="stream_sworn">Under the oath this stream can only get dearer.</string>
+
+    <string name="dur_min">%1$d min</string>
+    <string name="dur_h">%1$d h</string>
+    <string name="dur_hm">%1$d h %2$d min</string>
     <plurals name="minutes">
         <item quantity="one">%d min</item>
         <item quantity="other">%d min</item>
@@ -223,5 +296,17 @@
     <plurals name="crossings">
         <item quantity="one">%d crossing</item>
         <item quantity="other">%d crossings</item>
+    </plurals>
+    <plurals name="obols_available">
+        <item quantity="one">%d obol available</item>
+        <item quantity="other">%d obols available</item>
+    </plurals>
+    <plurals name="hours_served">
+        <item quantity="one">%d hour of service</item>
+        <item quantity="other">%d hours of service</item>
+    </plurals>
+    <plurals name="days">
+        <item quantity="one">%d day</item>
+        <item quantity="other">%d days</item>
     </plurals>
 </resources>

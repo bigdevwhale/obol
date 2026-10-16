@@ -1,6 +1,9 @@
 package app.obol.ui
 
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.core.tween
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
@@ -63,6 +66,7 @@ import app.obol.ui.pantheon.PatronScreen
 import app.obol.ui.rite.RiteScreen
 import app.obol.ui.settings.SettingsScreen
 import app.obol.ui.shore.ShoreTab
+import app.obol.ui.temple.TempleScreen
 import app.obol.ui.theme.Alegreya
 import app.obol.ui.theme.U
 import app.obol.watch.CharonService
@@ -93,6 +97,7 @@ class Go(private val nav: NavHostController) {
     fun stream(id: Long) = nav.navigate("stream/$id")
     fun rite() = nav.navigate("rite")
     fun settings() = nav.navigate("settings")
+    fun temple() = nav.navigate("temple")
     fun back() = nav.popBackStack()
 }
 
@@ -111,10 +116,31 @@ fun ObolRoot(settings: Settings) {
     val balance by dao.observeBalance().collectAsStateWithLifecycle(initialValue = 0L)
     val live by CharonService.state.collectAsStateWithLifecycle()
     val tick = rememberNow(2_000)
-    val charon = remember(tick, live.running) { live.running || CharonService.enabled(context) }
+    val charon = remember(tick, live.running) { live.running || CharonService.enabled(context) || app.obol.BuildConfig.DEMO }
     val day = remember(tick / 60_000) { Clock.day() }
     val data = remember(patrons, streams, targets, balance, settings, day, charon) {
         OData(patrons, streams, targets, balance, settings, day, charon)
+    }
+
+    // The crossing's countdown lives in a notification (the island on Xiaomi).
+    val askNotify = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { }
+    LaunchedEffect(settings.onboarded) {
+        if (settings.onboarded && !app.obol.watch.Island.canPost(context) && android.os.Build.VERSION.SDK_INT >= 33 && !app.obol.BuildConfig.DEMO) {
+            askNotify.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+        }
+    }
+
+    // The oath by the Styx: let go of the admin rights when it ends; note it when Charon is put to sleep during one.
+    LaunchedEffect(settings.oathUntil, charon) {
+        val c = context.container
+        val now = System.currentTimeMillis()
+        when {
+            settings.oathUntil != 0L && !settings.oath(now) -> {
+                app.obol.watch.Styx.release(context)
+                c.settings.update { it.copy(oathUntil = 0) }
+            }
+            settings.oath(now) && !charon -> c.settings.update { it.copy(oathBrokenAt = now, oathUntil = 0) }
+        }
     }
 
     Ground {
@@ -138,6 +164,7 @@ fun ObolRoot(settings: Settings) {
             }
             composable("rite") { RiteScreen(data, go) }
             composable("settings") { SettingsScreen(data, go) }
+            composable("temple") { TempleScreen(data, go) }
         }
     }
 }

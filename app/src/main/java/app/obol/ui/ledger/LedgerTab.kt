@@ -36,6 +36,7 @@ import app.obol.ui.OData
 import app.obol.ui.components.Card
 import app.obol.ui.components.Eyebrow
 import app.obol.ui.components.Fmt
+import app.obol.ui.components.duration
 import app.obol.ui.components.Gap
 import app.obol.ui.theme.U
 import app.obol.ui.theme.UType
@@ -50,8 +51,10 @@ fun LedgerTab(data: OData, @Suppress("UNUSED_PARAMETER") go: Go) {
     var day by rememberSaveable { mutableLongStateOf(data.day) }
     val entries by remember(day) { dao.observeDay(day) }.collectAsStateWithLifecycle(initialValue = emptyList())
     val days by remember(data.day) { dao.observeDays(data.day - 27) }.collectAsStateWithLifecycle(initialValue = emptyList())
+    val forgotten by remember(data.day) { dao.observeForgotten(data.day - 27) }.collectAsStateWithLifecycle(initialValue = 0L)
+    val memory by remember(day) { dao.observeMemory(day) }.collectAsStateWithLifecycle(initialValue = null)
 
-    Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).statusBarsPadding().padding(horizontal = 20.dp)) {
+    Column(Modifier.fillMaxSize().statusBarsPadding().verticalScroll(rememberScrollState()).padding(horizontal = 20.dp)) {
         Gap(16.dp)
         Text(stringResource(R.string.ledger_title), style = UType.Display)
         Gap(4.dp)
@@ -94,11 +97,23 @@ fun LedgerTab(data: OData, @Suppress("UNUSED_PARAMETER") go: Go) {
                 Text(stringResource(R.string.ostrakon_earned, Fmt.obols(earned)), style = UType.Muted.copy(color = U.c.gold), modifier = Modifier.weight(1f))
                 Text(stringResource(R.string.ostrakon_spent, Fmt.obols(spent)), style = UType.Muted.copy(color = U.c.lethe))
             }
+            if (forgotten > 0) {
+                Gap(6.dp)
+                Text(stringResource(R.string.ledger_forgotten, duration(forgotten.toInt())), style = UType.Muted.copy(color = U.c.danger))
+            }
         }
         Gap(14.dp)
         val title = if (day == data.day) stringResource(R.string.shore_today)
-        else LocalDate.ofEpochDay(day).format(DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL))
+        else LocalDate.ofEpochDay(day).format(DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL).withLocale(androidx.compose.ui.platform.LocalConfiguration.current.locales[0]))
         Ostrakon(entries, data, title)
+        memory?.let { m ->
+            Gap(10.dp)
+            Text(
+                if (m.nothing) stringResource(R.string.ledger_memory_nothing) else stringResource(R.string.ledger_memory, m.text),
+                style = UType.Muted.copy(color = if (m.nothing) U.c.danger else U.c.lethe),
+                modifier = Modifier.padding(horizontal = 4.dp),
+            )
+        }
         Gap(14.dp)
 
         // Every line of the day, with the reasons given to Charon.
@@ -117,11 +132,15 @@ fun LedgerTab(data: OData, @Suppress("UNUSED_PARAMETER") go: Go) {
                     Column(Modifier.weight(1f)) {
                         Text(name(e), style = UType.Body, maxLines = 1)
                         val why = reasonLabel(e.note)
-                        val sub = listOfNotNull(e.seconds.takeIf { it > 0 }?.let(Fmt::clock), why).joinToString(" · ")
+                        val sub = listOfNotNull(e.seconds.takeIf { it > 0 }?.let { duration(it) }, why).joinToString(" · ")
                         if (sub.isNotEmpty()) Text(sub, style = UType.Small)
                     }
                     Spacer(Modifier.width(8.dp))
-                    Text(Fmt.signed(e.cents), style = UType.Strong.copy(color = if (e.cents < 0) U.c.danger else if (e.cents > 0) U.c.good else U.c.muted))
+                    val held = e.kind == app.obol.data.EntryKind.VOW || e.kind == app.obol.data.EntryKind.VAULT || e.kind == app.obol.data.EntryKind.INTEREST
+                    Text(
+                        Fmt.signed(if (e.kind == app.obol.data.EntryKind.INTEREST) e.held else e.cents),
+                        style = UType.Strong.copy(color = if (held) U.c.gold else if (e.cents < 0) U.c.danger else if (e.cents > 0) U.c.good else U.c.muted),
+                    )
                 }
             }
         }

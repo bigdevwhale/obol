@@ -26,8 +26,11 @@ class OverlayHost(
     private val context: Context,
     /** Takes touches and covers the whole screen (the gate), or a small see-through badge. */
     private val blocking: Boolean,
+    /** Covers the whole screen without taking touches: the mist of Lethe. */
+    private val veil: Boolean = false,
+    /** The accessibility service's own window manager: only it carries the token for overlays. */
+    private val wm: WindowManager = context.getSystemService(WindowManager::class.java),
 ) : LifecycleOwner, SavedStateRegistryOwner, ViewModelStoreOwner {
-    private val wm = context.getSystemService(WindowManager::class.java)
     private val registry = LifecycleRegistry(this)
     private val saved = SavedStateRegistryController.create(this)
     private val store = ViewModelStore()
@@ -61,9 +64,16 @@ class OverlayHost(
             WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE or
                 WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN
         }
-        val size = if (blocking) WindowManager.LayoutParams.MATCH_PARENT else WindowManager.LayoutParams.WRAP_CONTENT
+        val size = if (blocking || veil) WindowManager.LayoutParams.MATCH_PARENT else WindowManager.LayoutParams.WRAP_CONTENT
         val lp = WindowManager.LayoutParams(size, size, WindowManager.LayoutParams.TYPE_ACCESSIBILITY_OVERLAY, flags, PixelFormat.TRANSLUCENT).apply {
-            gravity = if (blocking) Gravity.CENTER else Gravity.TOP or Gravity.CENTER_HORIZONTAL
+            gravity = if (blocking || veil) Gravity.CENTER else Gravity.TOP or Gravity.END
+            if (!blocking && !veil) {
+                // Under the status bar, in the corner: a centred punch-hole camera would hide it.
+                val res = context.resources
+                val id = res.getIdentifier("status_bar_height", "dimen", "android")
+                y = (if (id > 0) res.getDimensionPixelSize(id) else 0) + (6 * res.displayMetrics.density).toInt()
+                x = (12 * res.displayMetrics.density).toInt()
+            }
             if (android.os.Build.VERSION.SDK_INT >= 28) {
                 layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES
             }

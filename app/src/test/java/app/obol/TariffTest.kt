@@ -59,3 +59,14 @@ class TariffTest {
         assertNull(Site.parse("localhost"))
     }
 }
+
+class OracleTest {
+    @Test fun sameAnswerAllDayAndTwoHoursLong() {
+        val ids = listOf(3L, 1L, 2L)
+        val a = app.obol.domain.Oracle.blessing(20_000, ids)!!
+        assertEquals(a, app.obol.domain.Oracle.blessing(20_000, ids.reversed()))
+        assertEquals(120, a.to - a.from)
+        assertTrue(a.from >= 8 * 60 && a.to <= 22 * 60)
+        assertNull(app.obol.domain.Oracle.blessing(20_000, emptyList()))
+    }
+}

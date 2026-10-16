@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- An obol with Athena's owl, for the widget. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="32dp"
+    android:height="32dp"
+    android:viewportWidth="32"
+    android:viewportHeight="32">
+    <path android:fillColor="#DDB45E" android:pathData="M16,1A15,15 0 1,0 16.01,1z" />
+    <path android:strokeColor="#38000000" android:strokeWidth="1.1" android:fillColor="#00000000" android:pathData="M16,4A12,12 0 1,0 16.01,4z" />
+    <path android:strokeColor="#73000000" android:strokeWidth="1.1" android:fillColor="#00000000" android:pathData="M12.5,11.5a2.5,2.5 0 1,0 0.01,0z M19.5,11.5a2.5,2.5 0 1,0 0.01,0z" />
+    <path android:fillColor="#73000000" android:pathData="M14.8,16.2 L17.2,16.2 L16,19 Z" />
+    <path android:strokeColor="#73000000" android:strokeWidth="1" android:strokeLineCap="round" android:pathData="M11.5,22.5 L20.5,22.5" />
+</vector>

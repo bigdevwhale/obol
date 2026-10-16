@@ -8,7 +8,10 @@ import android.media.AudioFocusRequest
 import android.media.AudioManager
 import android.os.PowerManager
 import android.provider.Settings.Secure
+import android.util.Log
 import android.view.accessibility.AccessibilityEvent
+import app.obol.BuildConfig
+import app.obol.Lang
 import android.view.accessibility.AccessibilityNodeInfo
 import app.obol.container
 import app.obol.data.Crossing
@@ -18,6 +21,9 @@ import app.obol.data.Patron
 import app.obol.data.Settings
 import app.obol.data.Stream
 import app.obol.domain.Bank
+import app.obol.domain.Blessing
+import app.obol.domain.Oracle
+import app.obol.domain.Temple
 import app.obol.domain.Browsers
 import app.obol.domain.Clock
 import app.obol.domain.Fare
@@ -31,6 +37,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -69,6 +76,13 @@ class CharonService : AccessibilityService() {
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
     private lateinit var gate: OverlayHost
     private lateinit var badge: OverlayHost
+    private lateinit var mist: OverlayHost
+    private val mistLevel = mutableStateOf(0f)
+    private var islandWorks = false
+    /** Seconds on the far shore today, for the mist; -1 until loaded. */
+    private var shoreToday = -1
+    private var shoreDay = 0L
+    private var patronIds: List<Long> = emptyList()
     private lateinit var bank: Bank
 
     private var rules = Rules(emptyList(), emptyList(), emptyList())
@@ -85,6 +99,8 @@ class CharonService : AccessibilityService() {
     private var gateFor: GateState? = null
     private var focus: AudioFocusRequest? = null
     private var tickNo = 0L
+    private var lastMatch: Match = Match.None
+    private var islandFor = 0L
     private var balance = 0L
     private val badgeData = mutableStateOf<Pair<Crossing, Long>?>(null)
 
@@ -97,21 +113,37 @@ class CharonService : AccessibilityService() {
 
     override fun onServiceConnected() {
         super.onServiceConnected()
+        Log.i(TAG, "connected")
+        // The system may connect again (after an update or a toggle); never run two clocks at once.
+        scope.coroutineContext.cancelChildren()
+        if (::gate.isInitialized) {
+            gate.destroy()
+            badge.destroy()
+            mist.destroy()
+        }
         val c = applicationContext.container
         bank = Bank(c.dao)
-        gate = OverlayHost(this, blocking = true)
-        badge = OverlayHost(this, blocking = false)
+        // Overlays and notifications speak the language chosen in the app, not the phone's.
+        val ui = Lang.wrap(this)
+        val wm = getSystemService(android.view.WindowManager::class.java)
+        gate = OverlayHost(ui, blocking = true, wm = wm)
+        badge = OverlayHost(ui, blocking = false, wm = wm)
+        mist = OverlayHost(ui, blocking = false, veil = true, wm = wm)
+        islandWorks = Island.works(this)
         lastActivity = System.currentTimeMillis()
         scope.launch {
-            combine(c.dao.observePatrons(), c.dao.observeStreams(), c.dao.observeTargets()) { p, s, t -> Rules(p, s, t) }
-                .collect { rules = it }
+            combine(c.dao.observePatrons(), c.dao.observeStreams(), c.dao.observeTargets()) { p, s, t ->
+                patronIds = p.filter { it.active }.map { it.id }
+                Rules(p, s, t)
+            }.collect { rules = it }
         }
         scope.launch { c.settings.settings.collect { settings = it } }
         scope.launch { c.dao.observeBalance().collect { balance = it } }
+        scope.launch { Temple(c.dao, c.settings).accrue() }
         scope.launch {
             c.dao.openCrossings().forEach { open[it.streamId] = it }
             while (isActive) {
-                runCatching { tick() }
+                runCatching { tick() }.onFailure { Log.w(TAG, "tick", it) }
                 delay(1000)
             }
         }
@@ -137,8 +169,12 @@ class CharonService : AccessibilityService() {
         // The service scope dies below; the app's scope outlives it long enough to save the last seconds.
         applicationContext.container.scope.launch(Dispatchers.Main) { flushEarn() }
         live.value = Live()
-        gate.destroy()
-        badge.destroy()
+        if (::gate.isInitialized) {
+            gate.destroy()
+            badge.destroy()
+            mist.destroy()
+        }
+        Island.hide(this)
         releaseFocus()
         scope.cancel()
         super.onDestroy()
@@ -146,7 +182,10 @@ class CharonService : AccessibilityService() {
 
     private suspend fun tick() {
         val now = System.currentTimeMillis()
-        if (tickNo++ % 30 == 0L) applicationContext.container.settings.beat(now)
+        if (tickNo++ % 30 == 0L) {
+            applicationContext.container.settings.beat(now)
+            tellOracle()
+        }
 
         val awake = getSystemService(PowerManager::class.java).isInteractive &&
             !getSystemService(KeyguardManager::class.java).isKeyguardLocked
@@ -160,6 +199,8 @@ class CharonService : AccessibilityService() {
             if (p != null && p.audio && getSystemService(AudioManager::class.java).isMusicActive) Match.Serve(p) else Match.None
         }
 
+        if (BuildConfig.DEBUG && match != lastMatch) Log.i(TAG, "match $match awake=$awake root=${rootInActiveWindow?.packageName} rules=${!rules.isEmpty}")
+        lastMatch = match
         serve(match as? Match.Serve, awake, now)
         lethe(match as? Match.Lethe)
         live.value = Live(
@@ -216,8 +257,9 @@ class CharonService : AccessibilityService() {
             .also { earn = it }
         val active = !awake || now - lastActivity < settings.idleSec * 1000L
         if (!active) return
+        val blessed = blessing()?.let { it.patronId == r.patron.id && it.active(Clock.minuteOfDay()) } == true
+        r.cents += Tariff.earn(r.patron.rate, 1, r.before + r.seconds, r.patron.capMin) * (if (blessed) 2 else 1)
         r.seconds++
-        r.cents = Tariff.earn(r.patron.rate, r.seconds, r.before, r.patron.capMin)
         if (r.seconds - r.flushed >= 15) flushEarn()
     }
 
@@ -236,6 +278,18 @@ class CharonService : AccessibilityService() {
         r.flushed = r.seconds
     }
 
+    private fun blessing(): Blessing? = if (settings.oracleOn) Oracle.blessing(Clock.day(), patronIds) else null
+
+    /** Once a day, when the blessing begins, the oracle speaks. */
+    private suspend fun tellOracle() {
+        val b = blessing() ?: return
+        val today = Clock.day()
+        if (settings.oracleTold == today || !b.active(Clock.minuteOfDay())) return
+        val patron = rules.patron(b.patronId) ?: return
+        applicationContext.container.settings.update { it.copy(oracleTold = today) }
+        Oracles.tell(Lang.wrap(this), patron, b)
+    }
+
     // Lethe
 
     private suspend fun lethe(m: Match.Lethe?) {
@@ -244,12 +298,12 @@ class CharonService : AccessibilityService() {
         open.values.filter { it.meter && it.streamId != m?.stream?.id }.forEach { finish(it) }
         if (m == null) {
             if (shown != null) closeGate()
-            badge.hide()
+            leaveShore()
             return
         }
         val c = open[m.stream.id]
         if (c == null) {
-            badge.hide()
+            leaveShore()
             if (shown == null || shown.stream.id != m.stream.id) openGate(GateState.Ask(m.stream))
             return
         }
@@ -280,7 +334,15 @@ class CharonService : AccessibilityService() {
         open[stream.id] = c
         if (c.usedSec % 10 == 0) save(c)
         badgeData.value = c to balance
-        if (!badge.showing) badge.show { badgeData.value?.let { (cr, bal) -> Badge(cr, bal) } }
+        val wantBadge = settings.badgeOn && !islandWorks
+        if (wantBadge && !badge.showing) badge.show { badgeData.value?.let { (cr, bal) -> Badge(cr, bal) } }
+        if (!wantBadge) badge.hide()
+        veil()
+        // The island counts down by itself; a refresh now and then keeps it honest.
+        if (islandFor != c.id || c.usedSec % 15 == 0) {
+            Island.show(Lang.wrap(this), stream.name, c, balance)
+            islandFor = c.id
+        }
     }
 
     private suspend fun save(c: Crossing) {
@@ -292,7 +354,34 @@ class CharonService : AccessibilityService() {
     private suspend fun finish(c: Crossing) {
         open.remove(c.streamId)
         save(c.copy(open = false))
+        leaveShore()
+    }
+
+    /**
+     * The mist of Lethe: after five minutes on the far shore today it creeps in from the edges,
+     * thickest after twenty-five.
+     */
+    private suspend fun veil() {
+        val today = Clock.day()
+        if (shoreToday < 0 || shoreDay != today) {
+            shoreToday = applicationContext.container.dao.shoreSeconds(today)
+            shoreDay = today
+        }
+        shoreToday++
+        val level = if (settings.mistOn) ((shoreToday - 300) / 1200f).coerceIn(0f, 1f) else 0f
+        mistLevel.value = level
+        if (level > 0f && !mist.showing) mist.show { Mist(mistLevel.value) }
+        if (level == 0f) mist.hide()
+    }
+
+    /** Off the far shore: the badge, the mist and the island go, the prepaid time waits. */
+    private fun leaveShore() {
         badge.hide()
+        mist.hide()
+        if (islandFor != 0L) {
+            Island.hide(this)
+            islandFor = 0L
+        }
     }
 
     private fun openGate(state: GateState) {
@@ -344,6 +433,7 @@ class CharonService : AccessibilityService() {
     }
 
     companion object {
+        private const val TAG = "Charon"
         private val live = MutableStateFlow(Live())
         val state: StateFlow<Live> get() = live
 

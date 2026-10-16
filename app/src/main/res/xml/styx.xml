@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- No policies at all: being an administrator is only what keeps Obol from being uninstalled during an oath. -->
+<device-admin>
+    <uses-policies />
+</device-admin>

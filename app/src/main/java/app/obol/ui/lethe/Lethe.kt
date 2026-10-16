@@ -55,6 +55,7 @@ import app.obol.ui.components.AppIcon
 import app.obol.ui.components.Apps
 import app.obol.ui.components.Card
 import app.obol.ui.components.Fmt
+import app.obol.ui.components.duration
 import app.obol.ui.components.Gap
 import app.obol.ui.components.PrimaryButton
 import app.obol.ui.components.StepSlider
@@ -74,7 +75,7 @@ fun LetheTab(data: OData, go: Go) {
         today.filter { it.kind == EntryKind.CROSS || it.kind == EntryKind.PASS }.groupBy { it.streamId }
             .mapValues { (_, l) -> l.sumOf { it.seconds } to l.sumOf { it.cents } }
     }
-    Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).statusBarsPadding().padding(horizontal = 20.dp)) {
+    Column(Modifier.fillMaxSize().statusBarsPadding().verticalScroll(rememberScrollState()).padding(horizontal = 20.dp)) {
         Gap(16.dp)
         Text(stringResource(R.string.lethe_title), style = UType.Display)
         Gap(4.dp)
@@ -97,7 +98,7 @@ fun LetheTab(data: OData, go: Go) {
                     if (sec > 0 || cents != 0L) {
                         Column(horizontalAlignment = Alignment.End) {
                             Text(Fmt.signed(cents), style = UType.Number.copy(color = U.c.danger))
-                            Text(Fmt.clock(sec), style = UType.Small)
+                            Text(duration(sec), style = UType.Small)
                         }
                     }
                 }
@@ -133,16 +134,23 @@ fun StreamScreen(id: Long, data: OData, go: Go) {
         loaded = true
     }
     if (!loaded) return
+    // Under the oath a stream can only get dearer.
+    val sworn = data.settings.oath() && id != 0L
+    val minPrice = if (sworn) existing?.price ?: 0L else 0L
 
     Column(Modifier.fillMaxSize().imePadding()) {
         TopBar(stringResource(if (id == 0L) R.string.stream_new_title else R.string.stream_edit_title), back = { go.back() }) {
-            if (id != 0L) {
+            if (id != 0L && !sworn) {
                 Box(Modifier.size(44.dp).clip(CircleShape).clickable { confirmDelete = true }, contentAlignment = Alignment.Center) {
                     Icon(Icons.Rounded.DeleteOutline, null, tint = U.c.muted)
                 }
             }
         }
         Column(Modifier.weight(1f).verticalScroll(rememberScrollState()).padding(horizontal = 20.dp)) {
+            if (sworn) {
+                Text(stringResource(R.string.stream_sworn), style = UType.Small.copy(color = U.c.lethe))
+                Gap(10.dp)
+            }
             OutlinedTextField(
                 value = s.name,
                 onValueChange = { s = s.copy(name = it) },
@@ -156,16 +164,16 @@ fun StreamScreen(id: Long, data: OData, go: Go) {
             Card {
                 val pi = PRICES.indexOf(s.price).let { if (it < 0) PRICES.indexOfFirst { p -> p >= s.price }.coerceAtLeast(0) else it }
                 StepSlider(stringResource(R.string.stream_price), pi, 0..PRICES.lastIndex, { stringResource(R.string.patron_rate_value, Fmt.rate(PRICES[it])) }) {
-                    s = s.copy(price = PRICES[it])
+                    if (PRICES[it] >= minPrice) s = s.copy(price = PRICES[it])
                 }
                 val canFeed = apps.any { Feeds.markers(it).isNotEmpty() }
-                if (canFeed) {
+                if (canFeed && !(sworn && !s.feedOnly)) {
                     SwitchRow(stringResource(R.string.stream_feed_only), s.feedOnly, stringResource(R.string.stream_feed_only_help)) { s = s.copy(feedOnly = it) }
                 }
-                SwitchRow(stringResource(R.string.stream_active), s.active) { s = s.copy(active = it) }
+                if (!sworn) SwitchRow(stringResource(R.string.stream_active), s.active) { s = s.copy(active = it) }
             }
             Gap(20.dp)
-            TargetsEditor(apps, sites, { apps = it }, { sites = it }, stringResource(R.string.stream_site_hint))
+            TargetsEditor(apps, sites, { if (!sworn || it.containsAll(apps)) apps = it }, { if (!sworn || it.containsAll(sites)) sites = it }, stringResource(R.string.stream_site_hint))
             Gap(28.dp)
         }
         PrimaryButton(

@@ -44,7 +44,25 @@ data class Settings(
     /** No touch or scroll for this long and the patron stops counting. */
     val idleSec: Int = 90,
     val haptics: Boolean = true,
+    /** The timer plaque drawn over other apps; the notification island shows it anyway. */
+    val badgeOn: Boolean = true,
+    /** The oracle names a patron who pays double for two hours each day. */
+    val oracleOn: Boolean = true,
+    /** The mist of Lethe creeps in from the edges the longer you stay on the far shore. */
+    val mistOn: Boolean = true,
+    /** The treasury's interest a week, in percent. */
+    val interestPct: Int = 5,
+    /** Epoch day of the Monday the treasury was last paid. */
+    val lastAccrual: Long = 0,
+    /** The oath by the Styx holds until this moment (epoch ms); 0 = no oath. */
+    val oathUntil: Long = 0,
+    /** When an oath was last broken (epoch ms). It stays on record. */
+    val oathBrokenAt: Long = 0,
+    /** Epoch day on which the oracle's blessing was last announced. */
+    val oracleTold: Long = 0,
 ) {
+    fun oath(now: Long = System.currentTimeMillis()): Boolean = oathUntil > now
+
     val tariff: TariffRules
         get() = TariffRules(
             nightOn = nightOn, nightFrom = nightFrom, nightTo = nightTo, nightX = nightX,
@@ -79,6 +97,14 @@ class SettingsStore(context: Context) {
         debtPct = this[DEBT_PCT] ?: 20,
         idleSec = this[IDLE] ?: 90,
         haptics = this[HAPTICS] ?: true,
+        badgeOn = this[BADGE] ?: true,
+        oracleOn = this[ORACLE] ?: true,
+        mistOn = this[MIST] ?: true,
+        interestPct = this[INTEREST] ?: 5,
+        lastAccrual = this[ACCRUAL] ?: 0L,
+        oathUntil = this[OATH] ?: 0L,
+        oathBrokenAt = this[OATH_BROKEN] ?: 0L,
+        oracleTold = this[ORACLE_TOLD] ?: 0L,
     )
 
     suspend fun now(): Settings = settings.first()
@@ -104,6 +130,14 @@ class SettingsStore(context: Context) {
             it[DEBT_PCT] = s.debtPct
             it[IDLE] = s.idleSec
             it[HAPTICS] = s.haptics
+            it[BADGE] = s.badgeOn
+            it[ORACLE] = s.oracleOn
+            it[MIST] = s.mistOn
+            it[INTEREST] = s.interestPct
+            it[ACCRUAL] = s.lastAccrual
+            it[OATH] = s.oathUntil
+            it[OATH_BROKEN] = s.oathBrokenAt
+            it[ORACLE_TOLD] = s.oracleTold
         }
     }
 
@@ -134,5 +168,13 @@ class SettingsStore(context: Context) {
         val IDLE = intPreferencesKey("idle")
         val HAPTICS = booleanPreferencesKey("haptics")
         val HEARTBEAT = longPreferencesKey("heartbeat")
+        val BADGE = booleanPreferencesKey("badge")
+        val ORACLE = booleanPreferencesKey("oracle")
+        val MIST = booleanPreferencesKey("mist")
+        val INTEREST = intPreferencesKey("interest")
+        val ACCRUAL = longPreferencesKey("accrual")
+        val OATH = longPreferencesKey("oath")
+        val OATH_BROKEN = longPreferencesKey("oath_broken")
+        val ORACLE_TOLD = longPreferencesKey("oracle_told")
     }
 }

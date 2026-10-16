@@ -76,6 +76,7 @@ class Rules(patrons: List<Patron>, streams: List<Stream>, targets: List<Target>)
 
     fun streamForApp(pkg: String): Stream? = streamApps[pkg]
     fun patronForApp(pkg: String): Patron? = patronApps[pkg]
+    fun patron(id: Long): Patron? = patronById[id]
 
     /** Whether Charon needs to look for the feed inside this app. */
     fun watchesFeed(pkg: String): Boolean = streamApps[pkg]?.feedOnly == true && Feeds.markers(pkg).isNotEmpty()
@@ -100,8 +101,9 @@ class Rules(patrons: List<Patron>, streams: List<Stream>, targets: List<Target>)
 /** View ids that give away an endless feed inside an app. They change with app updates. */
 object Feeds {
     private val MARKERS = mapOf(
-        "com.instagram.android" to listOf("clips_viewer", "clips_video", "clips_tab", "reel_viewer"),
-        "com.google.android.youtube" to listOf("reel_player", "reel_recycler", "reel_watch", "reel_progress", "shorts_"),
+        // Checked on Instagram and YouTube in October 2026. Not "clips_tab": that tab icon is always on screen.
+        "com.instagram.android" to listOf("clips_viewer", "root_clips_layout", "clips_video_container"),
+        "com.google.android.youtube" to listOf("reel_watch_player", "reel_recycler", "reel_player_page"),
         "com.vkontakte.android" to listOf("clips_"),
         "com.facebook.katana" to listOf("reels_", "fb_shorts"),
         "com.snapchat.android" to listOf("spotlight"),

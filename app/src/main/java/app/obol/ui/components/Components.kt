@@ -122,7 +122,7 @@ fun PrimaryButton(text: String, modifier: Modifier = Modifier, enabled: Boolean 
 fun GhostButton(text: String, modifier: Modifier = Modifier, enabled: Boolean = true, icon: ImageVector? = null, color: Color = U.c.ink, onClick: () -> Unit) {
     Row(
         modifier
-            .heightIn(min = 48.dp)
+            .heightIn(min = 52.dp)
             .clip(U.RXl)
             .border(1.dp, U.c.line, U.RXl)
             .clickable(enabled = enabled, onClick = onClick)
@@ -247,4 +247,15 @@ object Fmt {
     fun hm(minuteOfDay: Int): String = "%02d:%02d".format(minuteOfDay / 60, minuteOfDay % 60)
 
     fun times(tenths: Int): String = if (tenths % 10 == 0) "×${tenths / 10}" else "×${tenths / 10}.${tenths % 10}"
+}
+
+/** A length of time in words: 36 min, 1 h 5 min, 3 h. Countdowns use [Fmt.clock] instead. */
+@Composable
+fun duration(sec: Int): String {
+    val m = (sec + 30) / 60
+    return when {
+        m < 60 -> androidx.compose.ui.res.stringResource(app.obol.R.string.dur_min, m)
+        m % 60 == 0 -> androidx.compose.ui.res.stringResource(app.obol.R.string.dur_h, m / 60)
+        else -> androidx.compose.ui.res.stringResource(app.obol.R.string.dur_hm, m / 60, m % 60)
+    }
 }

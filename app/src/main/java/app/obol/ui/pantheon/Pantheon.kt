@@ -1,5 +1,6 @@
 package app.obol.ui.pantheon
 
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -39,6 +40,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -57,6 +62,7 @@ import app.obol.ui.OData
 import app.obol.ui.components.Card
 import app.obol.ui.components.Eyebrow
 import app.obol.ui.components.Fmt
+import app.obol.ui.components.duration
 import app.obol.ui.components.Gap
 import app.obol.ui.components.Glyphs
 import app.obol.ui.components.Medallion
@@ -75,11 +81,13 @@ import kotlinx.coroutines.launch
 fun PantheonTab(data: OData, go: Go) {
     val context = LocalContext.current
     val today by context.container.dao.observeDay(data.day).collectAsStateWithLifecycle(initialValue = emptyList())
+    val service by context.container.dao.observeService().collectAsStateWithLifecycle(initialValue = emptyList())
+    val all = remember(service) { service.associateBy { it.patronId } }
     val served = remember(today) {
         today.filter { it.kind == EntryKind.EARN || it.kind == EntryKind.RITE }.groupBy { it.patronId }
             .mapValues { (_, l) -> l.sumOf { it.seconds } to l.sumOf { it.cents } }
     }
-    Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).statusBarsPadding().padding(horizontal = 20.dp)) {
+    Column(Modifier.fillMaxSize().statusBarsPadding().verticalScroll(rememberScrollState()).padding(horizontal = 20.dp)) {
         Gap(16.dp)
         Text(stringResource(R.string.pantheon_title), style = UType.Display)
         Gap(4.dp)
@@ -90,8 +98,17 @@ fun PantheonTab(data: OData, go: Go) {
             val count = data.patronTargets(p.id).size
             Card(Modifier.padding(bottom = 10.dp).alpha(if (p.active) 1f else 0.5f), onClick = { go.patron(p.id) }) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    // The pedestal grows with today's service.
-                    Medallion(p.glyph, U.c.hue(p.hue), 52.dp)
+                    // The pedestal grows with all the hours ever served; a neglected patron cracks.
+                    val sv = all[p.id]
+                    val hours = (sv?.seconds ?: 0L) / 3600
+                    val cracked = sv != null && sv.lastDay < data.day - 7
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Box {
+                            Medallion(p.glyph, if (cracked) U.c.faint else U.c.hue(p.hue), 52.dp)
+                            if (cracked) Cracks(Modifier.size(52.dp))
+                        }
+                        Pedestal(level(hours), Modifier.padding(top = 4.dp))
+                    }
                     Spacer(Modifier.width(14.dp))
                     Column(Modifier.weight(1f)) {
                         Text(Presets.patronName(context, p), style = UType.Heading)
@@ -101,11 +118,14 @@ fun PantheonTab(data: OData, go: Go) {
                             maxLines = 1,
                         )
                         Text(stringResource(R.string.patron_rate_short, Fmt.rate(p.rate)), style = UType.Small.copy(color = U.c.gold))
+                        val hrs = hours.toInt()
+                        if (cracked) Text(stringResource(R.string.patron_cracked), style = UType.Small.copy(color = U.c.danger))
+                        else if (hrs > 0) Text(pluralStringResource(R.plurals.hours_served, hrs, hrs), style = UType.Small)
                     }
                     if (sec > 0) {
                         Column(horizontalAlignment = Alignment.End) {
                             Text(Fmt.signed(cents), style = UType.Number.copy(color = U.c.good))
-                            Text(Fmt.clock(sec), style = UType.Small)
+                            Text(duration(sec), style = UType.Small)
                         }
                     }
                 }
@@ -243,5 +263,46 @@ fun PatronScreen(id: Long, data: OData, go: Go) {
             dismissButton = { TextButton({ confirmDelete = false }) { Text(stringResource(R.string.action_cancel), color = U.c.muted) } },
             containerColor = U.c.surface,
         )
+    }
+}
+
+/** Steps of the pedestal for all-time hours of service. */
+private fun level(hours: Long): Int = when {
+    hours >= 100 -> 5
+    hours >= 50 -> 4
+    hours >= 20 -> 3
+    hours >= 5 -> 2
+    hours >= 1 -> 1
+    else -> 0
+}
+
+/** A marble pedestal of [level] steps, widening towards the ground. */
+@Composable
+private fun Pedestal(level: Int, modifier: Modifier = Modifier) {
+    val marble = U.c.ink.copy(alpha = 0.55f)
+    val empty = U.c.line
+    Canvas(modifier.size(width = 56.dp, height = 18.dp)) {
+        val stepH = size.height / 5
+        for (i in 0 until 5) {
+            val w = size.width * (0.5f + 0.1f * i)
+            val y = i * stepH
+            drawRect(if (5 - i <= level) marble else empty, Offset((size.width - w) / 2, y + 0.5f), Size(w, stepH - 1.5f))
+        }
+    }
+}
+
+/** Cracks across a neglected patron's medallion. */
+@Composable
+private fun Cracks(modifier: Modifier) {
+    val c = U.c.bg
+    Canvas(modifier) {
+        val w = size.width
+        val h = size.height
+        val p = Path().apply {
+            moveTo(w * 0.30f, h * 0.05f); lineTo(w * 0.42f, h * 0.35f); lineTo(w * 0.33f, h * 0.55f); lineTo(w * 0.48f, h * 0.95f)
+            moveTo(w * 0.42f, h * 0.35f); lineTo(w * 0.70f, h * 0.42f); lineTo(w * 0.92f, h * 0.30f)
+            moveTo(w * 0.33f, h * 0.55f); lineTo(w * 0.10f, h * 0.62f)
+        }
+        drawPath(p, c, style = Stroke(width = 2.dp.toPx()))
     }
 }

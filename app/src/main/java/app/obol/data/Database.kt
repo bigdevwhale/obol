@@ -83,6 +83,12 @@ object EntryKind {
     const val PASS = "pass"
     /** Obols out of nowhere: the first ones on the road, corrections. */
     const val GIFT = "gift"
+    /** Obols laid aside for a vow, taken back when it's broken, or offered when it's kept. */
+    const val VOW = "vow"
+    /** Obols put into the temple treasury or taken out of it. */
+    const val VAULT = "vault"
+    /** The treasury's weekly interest. */
+    const val INTEREST = "interest"
 }
 
 /** One line of the ledger. The balance is the sum of all of them. */
@@ -100,7 +106,41 @@ data class Entry(
     val seconds: Int = 0,
     /** Free text: the reason given to Charon, the rite's length, "debt". */
     val note: String = "",
+    /** Cents moved into a vow or the treasury (negative when taken out); they leave the purse but aren't spent. */
+    val held: Long = 0,
+    /** The vow these obols are laid aside for; null with [held] means the treasury. */
+    val vowId: Long? = null,
 )
+
+/** A vow: a real reward saved up for in obols ("400 obols and the cinema on Saturday"). */
+@Entity
+data class Vow(
+    @PrimaryKey(autoGenerate = true) val id: Long = 0,
+    val title: String,
+    val glyph: String = "star",
+    /** Cents. */
+    val target: Long,
+    val createdAt: Long,
+    /** When the vow was kept: the obols were offered and the reward is yours. */
+    val keptAt: Long? = null,
+    /** When it was broken: the obols went back to the purse. */
+    val brokenAt: Long? = null,
+) {
+    val open: Boolean get() = keptAt == null && brokenAt == null
+}
+
+/** What was remembered from the far shore that day, or that nothing was. */
+@Entity
+data class Memory(
+    @PrimaryKey val day: Long,
+    val text: String = "",
+    val nothing: Boolean = false,
+)
+
+/** All-time service of one patron, for the pedestals. */
+data class Service(val patronId: Long, val seconds: Long, val lastDay: Long)
+
+data class VowSaved(val vowId: Long, val saved: Long)
 
 /** A paid passage across Lethe. Prepaid ones count down only while you're on the far shore. */
 @Entity(indices = [Index("streamId", "open")])
@@ -205,7 +245,7 @@ interface ObolDao {
     @Query(
         "SELECT day, COALESCE(SUM(CASE WHEN cents > 0 THEN cents ELSE 0 END), 0) AS earned, " +
             "COALESCE(SUM(CASE WHEN cents < 0 THEN -cents ELSE 0 END), 0) AS spent " +
-            "FROM Entry WHERE day >= :from GROUP BY day ORDER BY day DESC",
+            "FROM Entry WHERE day >= :from AND kind IN ('earn', 'rite', 'cross', 'pass', 'gift') GROUP BY day ORDER BY day DESC",
     )
     fun observeDays(from: Long): Flow<List<DaySum>>
 
@@ -229,6 +269,57 @@ interface ObolDao {
 
     @Query("SELECT COUNT(*) FROM Entry WHERE kind = 'gift'")
     suspend fun giftCount(): Int
+
+    @Query("SELECT patronId, COALESCE(SUM(seconds), 0) AS seconds, MAX(day) AS lastDay FROM Entry WHERE kind IN ('earn', 'rite') AND patronId IS NOT NULL GROUP BY patronId")
+    fun observeService(): Flow<List<Service>>
+
+    @Query("SELECT COALESCE(SUM(CASE WHEN cents > 0 THEN cents ELSE 0 END), 0) FROM Entry WHERE day = :day AND kind IN ('earn', 'rite')")
+    suspend fun earnedOn(day: Long): Long
+
+    @Query("SELECT COALESCE(SUM(-cents), 0) FROM Entry WHERE day = :day AND kind = 'cross'")
+    suspend fun spentOn(day: Long): Long
+
+    @Query("SELECT COALESCE(SUM(seconds), 0) FROM Entry WHERE day = :day AND kind IN ('cross', 'pass')")
+    suspend fun shoreSeconds(day: Long): Int
+
+    // Vows and the treasury
+
+    @Query("SELECT * FROM Vow ORDER BY (keptAt IS NULL AND brokenAt IS NULL) DESC, createdAt DESC")
+    fun observeVows(): Flow<List<Vow>>
+
+    @Query("SELECT vowId, COALESCE(SUM(held), 0) AS saved FROM Entry WHERE vowId IS NOT NULL GROUP BY vowId")
+    fun observeVowSaved(): Flow<List<VowSaved>>
+
+    @Query("SELECT COALESCE(SUM(held), 0) FROM Entry WHERE vowId = :id")
+    suspend fun vowSaved(id: Long): Long
+
+    @Query("SELECT COALESCE(SUM(held), 0) FROM Entry WHERE vowId IS NULL")
+    fun observeTreasury(): Flow<Long>
+
+    @Query("SELECT COALESCE(SUM(held), 0) FROM Entry WHERE vowId IS NULL")
+    suspend fun treasury(): Long
+
+    @Upsert suspend fun upsertVow(v: Vow): Long
+
+    @Query("SELECT * FROM Vow WHERE id = :id")
+    suspend fun vow(id: Long): Vow?
+
+    @Query("DELETE FROM Vow WHERE id = :id")
+    suspend fun deleteVow(id: Long)
+
+    // Memories of the far shore
+
+    @Query("SELECT * FROM Memory WHERE day = :day")
+    fun observeMemory(day: Long): Flow<Memory?>
+
+    @Query("SELECT * FROM Memory WHERE day >= :from ORDER BY day DESC")
+    fun observeMemories(from: Long): Flow<List<Memory>>
+
+    @Upsert suspend fun upsertMemory(m: Memory)
+
+    /** Seconds on the far shore on days when nothing was remembered: what Lethe took without a trace. */
+    @Query("SELECT COALESCE(SUM(e.seconds), 0) FROM Entry e JOIN Memory m ON m.day = e.day WHERE m.`nothing` = 1 AND e.kind IN ('cross', 'pass') AND e.day >= :from")
+    fun observeForgotten(from: Long): Flow<Long>
 
     // Crossings
 
@@ -254,7 +345,7 @@ interface ObolDao {
     }
 }
 
-@Database(entities = [Patron::class, Stream::class, Target::class, Entry::class, Crossing::class], version = 1, exportSchema = true)
+@Database(entities = [Patron::class, Stream::class, Target::class, Entry::class, Crossing::class, Vow::class, Memory::class], version = 1, exportSchema = true)
 abstract class ObolDatabase : RoomDatabase() {
     abstract fun dao(): ObolDao
 

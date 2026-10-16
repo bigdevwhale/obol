@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -92,17 +93,20 @@ fun GateScreen(
     Box(
         Modifier
             .fillMaxSize()
-            .background(U.c.bg.copy(alpha = 0.97f))
+            .background(U.c.bg)
             .clickable(enabled = false) {},
     ) {
+        androidx.compose.foundation.layout.BoxWithConstraints(Modifier.fillMaxSize().statusBarsPadding().navigationBarsPadding()) {
+        val tall = maxHeight
         Column(
             Modifier
-                .fillMaxSize()
-                .statusBarsPadding()
-                .navigationBarsPadding()
+                .fillMaxWidth()
                 .verticalScroll(rememberScrollState())
+                .heightIn(min = tall)
                 .padding(horizontal = 24.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
+            // Centred on tall screens, scrolling on short ones.
+            verticalArrangement = Arrangement.Center,
         ) {
             Gap(20.dp)
             Meander()
@@ -168,6 +172,7 @@ fun GateScreen(
                 )
             }
             Gap(24.dp)
+        }
         }
     }
 }
@@ -303,8 +308,6 @@ private fun FareTile(title: String, price: String?, debt: Boolean, modifier: Mod
 fun Badge(c: Crossing, balance: Long) = ObolTheme(dark = true) {
     Row(
         Modifier
-            .statusBarsPadding()
-            .padding(top = 4.dp)
             .clip(U.RXl)
             .background(U.c.bg.copy(alpha = 0.86f))
             .border(1.dp, U.c.accent.copy(alpha = 0.5f), U.RXl)
@@ -320,5 +323,25 @@ fun Badge(c: Crossing, balance: Long) = ObolTheme(dark = true) {
             Spacer(Modifier.width(4.dp))
             Text(Fmt.clock(c.leftSec), style = UType.Small.copy(color = U.c.ink, fontSize = 12.sp, fontFeatureSettings = "tnum"))
         }
+    }
+}
+
+/** The mist of Lethe: grey haze from the edges of the screen, thicker the longer you stay. */
+@Composable
+fun Mist(level: Float) = ObolTheme(dark = true) {
+    val mist = U.c.lethe
+    val alpha by animateFloatAsState(level, tween(1500), label = "mist")
+    Canvas(Modifier.fillMaxSize()) {
+        val r = maxOf(size.width, size.height) * 0.75f
+        drawRect(
+            androidx.compose.ui.graphics.Brush.radialGradient(
+                0f to androidx.compose.ui.graphics.Color.Transparent,
+                (0.75f - 0.25f * alpha) to androidx.compose.ui.graphics.Color.Transparent,
+                1f to mist.copy(alpha = 0.85f * alpha),
+                center = center,
+                radius = r,
+            ),
+        )
+        drawRect(mist.copy(alpha = 0.12f * alpha))
     }
 }

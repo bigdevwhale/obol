@@ -24,6 +24,7 @@ import app.obol.ui.OData
 import app.obol.ui.components.Card
 import app.obol.ui.components.Eyebrow
 import app.obol.ui.components.Fmt
+import app.obol.ui.components.duration
 import app.obol.ui.components.Gap
 import app.obol.ui.components.Medallion
 import app.obol.ui.components.Obol
@@ -31,15 +32,18 @@ import app.obol.ui.components.Rule
 import app.obol.ui.theme.U
 import app.obol.ui.theme.UType
 
+private val COUNTED = setOf(EntryKind.EARN, EntryKind.RITE, EntryKind.CROSS, EntryKind.PASS, EntryKind.GIFT)
+
 /** One summed line of a day: a patron served, a stream crossed, a rite. */
-data class Line(val key: String, val title: String, val glyph: String?, val hue: Int, val seconds: Int, val cents: Long, val count: Int, val lethe: Boolean)
+data class Line(val key: String, val title: String, val glyph: String?, val hue: Int, val seconds: Int, val cents: Long, val count: Int, val lethe: Boolean, val temple: Boolean = false)
 
 /** Sums a day's entries into lines: one per patron and one per stream. */
 fun lines(entries: List<Entry>, data: OData, name: (Entry) -> String): List<Line> =
-    entries.groupBy { e ->
+    entries.filter { it.kind != EntryKind.INTEREST }.groupBy { e ->
         when (e.kind) {
             EntryKind.EARN, EntryKind.RITE -> "p${e.patronId}-${e.kind}"
             EntryKind.CROSS, EntryKind.PASS -> "s${e.streamId}"
+            EntryKind.VOW, EntryKind.VAULT -> "temple"
             else -> e.kind
         }
     }.map { (key, list) ->
@@ -54,8 +58,9 @@ fun lines(entries: List<Entry>, data: OData, name: (Entry) -> String): List<Line
             cents = list.sumOf { it.cents },
             count = list.size,
             lethe = e.kind == EntryKind.CROSS || e.kind == EntryKind.PASS,
+            temple = key == "temple",
         )
-    }.sortedWith(compareBy<Line> { it.lethe }.thenByDescending { kotlin.math.abs(it.cents) })
+    }.sortedWith(compareBy<Line> { it.temple }.thenBy { it.lethe }.thenByDescending { kotlin.math.abs(it.cents) })
 
 @Composable
 fun entryName(data: OData): (Entry) -> String {
@@ -63,11 +68,13 @@ fun entryName(data: OData): (Entry) -> String {
     val gift = stringResource(R.string.line_gift)
     val gone = stringResource(R.string.line_gone)
     val riteOf = stringResource(R.string.line_rite)
+    val temple = stringResource(R.string.line_temple)
     return { e ->
         when (e.kind) {
             EntryKind.EARN -> data.patron(e.patronId)?.let { Presets.patronName(context, it) } ?: gone
             EntryKind.RITE -> riteOf.format(data.patron(e.patronId)?.let { Presets.patronName(context, it) } ?: gone)
             EntryKind.CROSS, EntryKind.PASS -> data.stream(e.streamId)?.let { Presets.streamName(context, it) } ?: gone
+            EntryKind.VOW, EntryKind.VAULT, EntryKind.INTEREST -> temple
             else -> gift
         }
     }
@@ -77,8 +84,10 @@ fun entryName(data: OData): (Entry) -> String {
 @Composable
 fun Ostrakon(entries: List<Entry>, data: OData, title: String, modifier: Modifier = Modifier) {
     val ls = lines(entries, data, entryName(data))
-    val earned = entries.filter { it.cents > 0 }.sumOf { it.cents }
-    val spent = -entries.filter { it.cents < 0 }.sumOf { it.cents }
+    // Obols moved into the temple are neither given nor taken.
+    val counted = entries.filter { it.kind in COUNTED }
+    val earned = counted.filter { it.cents > 0 }.sumOf { it.cents }
+    val spent = -counted.filter { it.cents < 0 }.sumOf { it.cents }
     Card(modifier) {
         Eyebrow(title)
         Gap(12.dp)
@@ -97,7 +106,8 @@ fun Ostrakon(entries: List<Entry>, data: OData, title: String, modifier: Modifie
                 Column(Modifier.weight(1f)) {
                     Text(l.title, style = UType.Body, maxLines = 1)
                     val sub = buildString {
-                        if (l.seconds > 0) append(Fmt.clock(l.seconds))
+                        if (l.seconds > 0) append(duration(l.seconds))
+                        if (l.temple) append(stringResource(R.string.line_temple_sub))
                         if (l.lethe) {
                             if (isNotEmpty()) append(" · ")
                             append(pluralStringResource(R.plurals.crossings, l.count, l.count))
@@ -107,7 +117,7 @@ fun Ostrakon(entries: List<Entry>, data: OData, title: String, modifier: Modifie
                 }
                 Text(
                     Fmt.signed(l.cents),
-                    style = UType.Number.copy(color = if (l.cents < 0) U.c.danger else if (l.cents > 0) U.c.good else U.c.muted),
+                    style = UType.Number.copy(color = if (l.temple) U.c.gold else if (l.cents < 0) U.c.danger else if (l.cents > 0) U.c.good else U.c.muted),
                 )
             }
         }

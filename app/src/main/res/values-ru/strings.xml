@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="app_name">Обол</string>
+    <string name="charon_service_label">Обол · Харон</string>
+    <string name="charon_service_description">Харон видит, какое приложение или сайт открыт. Время в приложениях покровителей приносит оболы, а ленты, которые ты назвал водами Леты, просят плату за переправу. Ничего не покидает телефон: ни интернета, ни аккаунта, ни аналитики.</string>
+
+    <string name="action_save">Сохранить</string>
+    <string name="action_cancel">Отмена</string>
+    <string name="action_delete">Удалить</string>
+    <string name="action_done">Готово</string>
+    <string name="action_next">Дальше</string>
+    <string name="unit_min">мин</string>
+
+    <string name="tab_shore">Берег</string>
+    <string name="tab_pantheon">Пантеон</string>
+    <string name="tab_lethe">Лета</string>
+    <string name="tab_ledger">Книга</string>
+
+    <!-- Onboarding -->
+    <string name="onb1_title">Каждая переправа через Лету стоит обол</string>
+    <string name="onb1_text">В мифе Лета — река забвения: выпил из неё, и часы исчезли. Бесконечная лента устроена так же. Харон перевезёт тебя на тот берег, но не бесплатно.</string>
+    <string name="onb2_title">Служи музам — получай оболы</string>
+    <string name="onb2_text">Каллиопа платит за чтение, Гермес — за языки, Афина — за учёбу, Гестия — за тишину, Ника — за спорт. Создай своих покровителей для всего, что важно: гитары, кода, своего проекта.</string>
+    <string name="onb3_title">Плати Харону за ленту</string>
+    <string name="onb3_text">Откроешь Reels или TikTok — у ворот ждёт Харон. Заплати за 5, 15 или 30 минут или плыви по счётчику. Ночью дороже, каждая следующая переправа дороже, а повернуть назад можно всегда.</string>
+    <string name="onb4_title">Разбуди Харона</string>
+    <string name="onb4_text">Харон работает как служба специальных возможностей: так он видит, какое приложение и сайт открыты, и ставит ворота перед лентой. Найди Обол в списке и включи.</string>
+    <string name="onb4_off">Харон ещё спит</string>
+    <string name="onb4_privacy">Всё остаётся на этом телефоне. У Обола вообще нет доступа в интернет.</string>
+    <string name="onb_later">Позже</string>
+    <string name="onb_begin">Взять первые оболы</string>
+
+    <!-- Shore -->
+    <string name="shore_debt">в долгу у Аида</string>
+    <string name="shore_asleep_title">Харон спит</string>
+    <string name="shore_asleep_sub">Без него ничего не считается, а ленты бесплатны. Включи Обол в настройках специальных возможностей.</string>
+    <string name="shore_wake">Разбудить Харона</string>
+    <string name="shore_serving_now">Сейчас служишь</string>
+    <string name="shore_on_far_shore">На том берегу: %1$s, осталось %2$s</string>
+    <string name="shore_on_meter">На том берегу: %1$s, по счётчику</string>
+    <string name="shore_nyx">Час Никты: переправа %1$s</string>
+    <string name="shore_morning">Раннее утро: переправа %1$s</string>
+    <string name="shore_today">Сегодня</string>
+    <string name="shore_rite">Начать обряд</string>
+    <string name="shore_passes">Посох Гермеса: %1$d из %2$d бесплатных переправ на этой неделе</string>
+
+    <!-- Ostrakon -->
+    <string name="ostrakon_empty">Пока пусто. Открой книгу, урок или медитацию — и здесь появятся первые оболы.</string>
+    <string name="ostrakon_earned">Отдано покровителям: %1$s</string>
+    <string name="ostrakon_spent">Забрала Лета: %1$s</string>
+    <string name="line_gift">Оболы на дорогу</string>
+    <string name="line_gone">Забыто</string>
+    <string name="line_rite">Обряд: %1$s</string>
+
+    <!-- Pantheon -->
+    <string name="pantheon_title">Пантеон</string>
+    <string name="pantheon_sub">Покровители полезного времени. Их приложения и сайты приносят оболы.</string>
+    <string name="pantheon_new">Посвятить нового покровителя</string>
+    <string name="patron_calliope">Каллиопа</string>
+    <string name="patron_calliope_domain">Муза чтения</string>
+    <string name="patron_hermes">Гермес</string>
+    <string name="patron_hermes_domain">Вестник языков</string>
+    <string name="patron_athena">Афина</string>
+    <string name="patron_athena_domain">Богиня учёбы</string>
+    <string name="patron_hestia">Гестия</string>
+    <string name="patron_hestia_domain">Хранительница очага и тишины</string>
+    <string name="patron_nike">Ника</string>
+    <string name="patron_nike_domain">Богиня победы и спорта</string>
+    <string name="patron_unnamed">Безымянный покровитель</string>
+    <string name="patron_rate_short">%1$s обол/мин</string>
+    <string name="patron_rate_value">%1$s обол/мин</string>
+    <string name="patron_new_title">Новый покровитель</string>
+    <string name="patron_edit_title">Покровитель</string>
+    <string name="patron_name_hint">Гитара, Код, Аполлон…</string>
+    <string name="patron_name_help">Любое имя: муза, бог или просто то, чем ты занимаешься.</string>
+    <string name="patron_glyph">Символ</string>
+    <string name="patron_glaze">Глазурь</string>
+    <string name="patron_rate">Платит</string>
+    <string name="patron_cap">Полный курс до</string>
+    <string name="patron_cap_none">без предела</string>
+    <string name="patron_cap_help">После стольких минут в день курс падает вдвое, чтобы забытое открытым приложение не копило оболы.</string>
+    <string name="patron_audio">Считать с выключенным экраном</string>
+    <string name="patron_audio_help">Для медитаций и аудиокниг: считается, пока приложение играет звук.</string>
+    <string name="patron_active">Активен</string>
+    <string name="patron_site_hint">wikipedia.org</string>
+    <string name="patron_delete_title">Отпустить покровителя?</string>
+    <string name="patron_delete_text">Его приложения и сайты перестанут приносить оболы. Заработанное останется в книге.</string>
+
+    <!-- Lethe -->
+    <string name="lethe_title">Лета</string>
+    <string name="lethe_sub">Потоки забвения. Переправа в них стоит оболы.</string>
+    <string name="lethe_new">Добавить поток</string>
+    <string name="stream_unnamed">Безымянный поток</string>
+    <string name="stream_price_short">%1$s обол/мин до тарифов</string>
+    <string name="stream_feed_only_short">Только бесконечная лента</string>
+    <string name="stream_new_title">Новый поток</string>
+    <string name="stream_edit_title">Поток</string>
+    <string name="stream_name_hint">Название</string>
+    <string name="stream_price">Минута стоит</string>
+    <string name="stream_feed_only">Только бесконечная лента</string>
+    <string name="stream_feed_only_help">Платными будут Reels и Shorts, а переписка и остальное приложение останутся бесплатными.</string>
+    <string name="stream_active">Харон охраняет поток</string>
+    <string name="stream_site_hint">youtube.com/shorts</string>
+    <string name="stream_delete_title">Осушить поток?</string>
+    <string name="stream_delete_text">Его приложения и сайты снова станут бесплатными. Прошлые переправы останутся в книге.</string>
+
+    <!-- Targets -->
+    <string name="targets_apps">Приложения</string>
+    <string name="targets_sites">Сайты</string>
+    <string name="targets_add_app">Добавить приложения</string>
+    <string name="targets_not_installed">нет на этом телефоне</string>
+    <string name="targets_site_help">Сайт со всеми поддоменами или его часть: youtube.com/shorts. Работает в Chrome, Firefox, Samsung Internet, Яндексе, Opera, Edge и Brave.</string>
+    <string name="picker_title">Приложения</string>
+    <string name="picker_search">Поиск</string>
+    <string name="picker_loading">Смотрю приложения…</string>
+
+    <!-- Gate -->
+    <string name="gate_title">Харон ждёт платы</string>
+    <string name="gate_over_title">Лодка поворачивает назад</string>
+    <string name="gate_broke_title">Кошель пуст</string>
+    <string name="gate_over_sub">Оплаченное время вышло. Харон отвезёт тебя обратно на берег, если не заплатишь снова.</string>
+    <string name="gate_broke_sub">Счётчик забрал последний обол. Послужи покровителям или займи у Аида, если он ещё даёт в долг.</string>
+    <string name="gate_return">Вернуться на берег</string>
+    <string name="gate_pay_more">Заплатить ещё</string>
+    <string name="gate_back">Повернуть назад</string>
+    <string name="gate_why">Зачем тебе на тот берег?</string>
+    <string name="why_bored">Просто скучно</string>
+    <string name="why_friend">Написать кому-то</string>
+    <string name="why_rest">Заслуженный отдых</string>
+    <string name="why_thing">Ищу что-то конкретное</string>
+    <string name="gate_breathe">Вдохни. Харон никуда не спешит.</string>
+    <string name="gate_balance">В кошеле: %1$s</string>
+    <string name="gate_price">Минута сейчас стоит %1$s обол</string>
+    <string name="gate_night">Час Никты: %1$s</string>
+    <string name="gate_morning">Раннее утро: %1$s</string>
+    <string name="gate_climb">%1$d-я переправа сегодня: %2$s</string>
+    <string name="gate_refused">Такая плата сейчас не по кошелю.</string>
+    <string name="gate_meter">По счётчику · %1$s в минуту</string>
+    <string name="gate_pass">Посох Гермеса: 5 минут бесплатно (осталось %1$d)</string>
+    <string name="gate_on_debt">частично в долг</string>
+    <string name="gate_debt_note">Аид даёт в долг до %2$d оболов под %1$d%%.</string>
+
+    <!-- Ledger -->
+    <string name="ledger_title">Книга</string>
+    <string name="ledger_sub">Четыре недели служения и забвения.</string>
+    <string name="ledger_frieze">Фриз за четыре недели</string>
+    <string name="ledger_lines">Все записи</string>
+    <string name="ledger_debt">в долг</string>
+
+    <!-- Rite -->
+    <string name="rite_title">Обряд</string>
+    <string name="rite_sub">Время без телефона: бумажная книга, практика, тренировка. Положи телефон экраном вниз — таймер идёт, только пока он так лежит.</string>
+    <string name="rite_whom">Кому</string>
+    <string name="rite_length">Сколько</string>
+    <string name="rite_reward">Награда: %1$s</string>
+    <string name="rite_start">Начать</string>
+    <string name="rite_put_down">Положи телефон экраном вниз, чтобы начать.</string>
+    <string name="rite_running">Обряд идёт. Не трогай телефон.</string>
+    <string name="rite_lifted">Положи телефон обратно: %1$d с до того, как обряд прервётся.</string>
+    <string name="rite_give_up">Сдаться</string>
+    <string name="rite_done_title">Обряд завершён</string>
+    <string name="rite_done_sub">%1$s принимает подношение: %2$s об.</string>
+    <string name="rite_broken_title">Обряд прерван</string>
+    <string name="rite_broken_sub">Телефон взяли в руки. В этот раз без оболов, но можно начать заново.</string>
+    <string name="rite_again">Начать заново</string>
+
+    <!-- Settings -->
+    <string name="settings_title">Настройки</string>
+    <string name="settings_charon">Харон</string>
+    <string name="settings_charon_on">Харон не спит и следит</string>
+    <string name="settings_charon_off">Харон спит: ничего не считается</string>
+    <string name="settings_charon_open">Специальные возможности</string>
+    <string name="settings_autostart">На Xiaomi, Huawei и некоторых других телефонах ещё разреши автозапуск и сними ограничения батареи, иначе система усыпит Харона.</string>
+    <string name="settings_app_info">Настройки приложения</string>
+    <string name="settings_idle">Перестать считать через</string>
+    <string name="settings_idle_help">Если столько времени нет касаний и прокрутки, покровитель перестаёт считать.</string>
+    <string name="settings_seconds">%1$d с</string>
+    <string name="settings_tariffs">Тарифы</string>
+    <string name="settings_night">Час Никты</string>
+    <string name="settings_night_help">С %1$s до %2$s переправа дороже</string>
+    <string name="settings_night_from">Ночь начинается</string>
+    <string name="settings_night_to">Ночь кончается</string>
+    <string name="settings_multiplier">Множитель</string>
+    <string name="settings_morning">Раннее утро</string>
+    <string name="settings_morning_help">С конца ночи до %1$s</string>
+    <string name="settings_morning_to">Утро кончается</string>
+    <string name="settings_climb">Растущая плата</string>
+    <string name="settings_climb_help">Каждая переправа после первой за день стоит в полтора раза больше, до ×3.</string>
+    <string name="settings_gate">Ворота</string>
+    <string name="settings_ask_why">Спрашивать, зачем</string>
+    <string name="settings_pause">Пауза перед оплатой</string>
+    <string name="settings_passes">Посох Гермеса в неделю</string>
+    <string name="settings_passes_help">Бесплатные переправы на 5 минут для настоящих дел: сообщение, ссылка от друга.</string>
+    <string name="settings_debt">Долг Аиду</string>
+    <string name="settings_debt_on">Аид даёт в долг</string>
+    <string name="settings_debt_help">Когда кошель пуст, можно уйти в минус — с процентами на занятую часть.</string>
+    <string name="settings_debt_limit">До</string>
+    <string name="settings_debt_pct">Проценты</string>
+    <string name="settings_look">Вид</string>
+    <string name="theme_dark">Чернофигурный</string>
+    <string name="theme_light">Краснофигурный</string>
+    <string name="theme_system">Как в системе</string>
+    <string name="settings_language">Язык</string>
+    <string name="lang_system">Системный</string>
+    <string name="settings_about">Обол %1$s · часть Stillcraft · без рекламы и аккаунта, работает офлайн</string>
+
+    <plurals name="minutes">
+        <item quantity="one">%d мин</item>
+        <item quantity="few">%d мин</item>
+        <item quantity="many">%d мин</item>
+        <item quantity="other">%d мин</item>
+    </plurals>
+    <plurals name="obols">
+        <item quantity="one">%d обол</item>
+        <item quantity="few">%d обола</item>
+        <item quantity="many">%d оболов</item>
+        <item quantity="other">%d обола</item>
+    </plurals>
+    <!-- The number itself is drawn large above this line. -->
+    <plurals name="obols_in_purse" tools:ignore="ImpliedQuantity">
+        <item quantity="one">обол в кошеле</item>
+        <item quantity="few">обола в кошеле</item>
+        <item quantity="many">оболов в кошеле</item>
+        <item quantity="other">обола в кошеле</item>
+    </plurals>
+    <plurals name="targets_count">
+        <item quantity="one">%d приложение или сайт</item>
+        <item quantity="few">%d приложения и сайта</item>
+        <item quantity="many">%d приложений и сайтов</item>
+        <item quantity="other">%d приложения и сайта</item>
+    </plurals>
+    <plurals name="crossings">
+        <item quantity="one">%d переправа</item>
+        <item quantity="few">%d переправы</item>
+        <item quantity="many">%d переправ</item>
+        <item quantity="other">%d переправы</item>
+    </plurals>
+</resources>

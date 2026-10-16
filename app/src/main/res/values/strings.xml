@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Obol</string>
+    <string name="charon_service_label">Obol · Charon</string>
+    <string name="charon_service_description">Charon sees which app or site is on the screen. Time in the apps of your patrons earns obols, and the feeds you named as streams of Lethe ask for a fare. Nothing leaves the phone: no internet, no account, no analytics.</string>
+
+    <string name="action_save">Save</string>
+    <string name="action_cancel">Cancel</string>
+    <string name="action_delete">Delete</string>
+    <string name="action_done">Done</string>
+    <string name="action_next">Next</string>
+    <string name="unit_min">min</string>
+
+    <string name="tab_shore">Shore</string>
+    <string name="tab_pantheon">Pantheon</string>
+    <string name="tab_lethe">Lethe</string>
+    <string name="tab_ledger">Ledger</string>
+
+    <!-- Onboarding -->
+    <string name="onb1_title">Every crossing of Lethe costs an obol</string>
+    <string name="onb1_text">In the myth, Lethe is the river of forgetting: drink from it and the hours are gone. An endless feed works the same way. Charon will ferry you across, but not for free.</string>
+    <string name="onb2_title">Serve the muses, earn obols</string>
+    <string name="onb2_text">Calliope pays for reading, Hermes for languages, Athena for learning, Hestia for stillness, Nike for sport. Make your own patrons for anything that matters to you: guitar, code, a side project.</string>
+    <string name="onb3_title">Pay Charon for the feed</string>
+    <string name="onb3_text">Open Reels or TikTok and Charon waits at the gate. Pay for 5, 15 or 30 minutes, or go by the meter. Night costs more, every crossing after the first costs more, and you can always just turn back.</string>
+    <string name="onb4_title">Wake Charon</string>
+    <string name="onb4_text">Charon works as an accessibility service: that is how he sees which app and site is open and puts the gate in front of a feed. Find Obol in the list and switch it on.</string>
+    <string name="onb4_off">Charon is still asleep</string>
+    <string name="onb4_privacy">Everything stays on this phone. Obol has no internet access at all.</string>
+    <string name="onb_later">Later</string>
+    <string name="onb_begin">Take the first obols</string>
+
+    <!-- Shore -->
+    <string name="shore_debt">owed to Hades</string>
+    <string name="shore_asleep_title">Charon is asleep</string>
+    <string name="shore_asleep_sub">Without him nothing is counted and the feeds are free. Switch Obol on in the accessibility settings.</string>
+    <string name="shore_wake">Wake Charon</string>
+    <string name="shore_serving_now">Serving now</string>
+    <string name="shore_on_far_shore">On the far shore: %1$s, %2$s left</string>
+    <string name="shore_on_meter">On the far shore: %1$s, by the meter</string>
+    <string name="shore_nyx">Nyx\'s hour: crossings cost %1$s</string>
+    <string name="shore_morning">Early morning: crossings cost %1$s</string>
+    <string name="shore_today">Today</string>
+    <string name="shore_rite">Begin a rite</string>
+    <string name="shore_passes">Hermes\' staff: %1$d of %2$d free crossings left this week</string>
+
+    <!-- Ostrakon -->
+    <string name="ostrakon_empty">Nothing yet. Open a book, a lesson or a meditation, and the first obols will appear here.</string>
+    <string name="ostrakon_earned">Given to patrons: %1$s</string>
+    <string name="ostrakon_spent">Taken by Lethe: %1$s</string>
+    <string name="line_gift">Obols for the road</string>
+    <string name="line_gone">Forgotten</string>
+    <string name="line_rite">Rite: %1$s</string>
+
+    <!-- Pantheon -->
+    <string name="pantheon_title">Pantheon</string>
+    <string name="pantheon_sub">Patrons of useful time. Their apps and sites earn obols.</string>
+    <string name="pantheon_new">Dedicate a new patron</string>
+    <string name="patron_calliope">Calliope</string>
+    <string name="patron_calliope_domain">Muse of reading</string>
+    <string name="patron_hermes">Hermes</string>
+    <string name="patron_hermes_domain">Messenger of languages</string>
+    <string name="patron_athena">Athena</string>
+    <string name="patron_athena_domain">Goddess of learning</string>
+    <string name="patron_hestia">Hestia</string>
+    <string name="patron_hestia_domain">Keeper of the hearth and stillness</string>
+    <string name="patron_nike">Nike</string>
+    <string name="patron_nike_domain">Goddess of victory and sport</string>
+    <string name="patron_unnamed">Nameless patron</string>
+    <string name="patron_rate_short">%1$s obol/min</string>
+    <string name="patron_rate_value">%1$s obol/min</string>
+    <string name="patron_new_title">New patron</string>
+    <string name="patron_edit_title">Patron</string>
+    <string name="patron_name_hint">Guitar, Code, Apollo…</string>
+    <string name="patron_name_help">Any name: a muse, a god or simply what you do.</string>
+    <string name="patron_glyph">Symbol</string>
+    <string name="patron_glaze">Glaze</string>
+    <string name="patron_rate">Pays</string>
+    <string name="patron_cap">Full rate up to</string>
+    <string name="patron_cap_none">no limit</string>
+    <string name="patron_cap_help">Past this many minutes a day the rate halves, so an app left open can\'t farm obols.</string>
+    <string name="patron_audio">Counts with the screen off</string>
+    <string name="patron_audio_help">For meditations and audiobooks: counts while the app plays sound.</string>
+    <string name="patron_active">Active</string>
+    <string name="patron_site_hint">wikipedia.org</string>
+    <string name="patron_delete_title">Release this patron?</string>
+    <string name="patron_delete_text">Their apps and sites will stop earning. Obols already earned stay in the ledger.</string>
+
+    <!-- Lethe -->
+    <string name="lethe_title">Lethe</string>
+    <string name="lethe_sub">Streams of forgetting. Crossing into them costs obols.</string>
+    <string name="lethe_new">Add a stream</string>
+    <string name="stream_unnamed">Nameless stream</string>
+    <string name="stream_price_short">%1$s obol/min before tariffs</string>
+    <string name="stream_feed_only_short">Only the endless feed</string>
+    <string name="stream_new_title">New stream</string>
+    <string name="stream_edit_title">Stream</string>
+    <string name="stream_name_hint">Name</string>
+    <string name="stream_price">A minute costs</string>
+    <string name="stream_feed_only">Only the endless feed</string>
+    <string name="stream_feed_only_help">Reels and Shorts cost obols; messages and the rest of the app stay free.</string>
+    <string name="stream_active">Charon guards this stream</string>
+    <string name="stream_site_hint">youtube.com/shorts</string>
+    <string name="stream_delete_title">Drain this stream?</string>
+    <string name="stream_delete_text">Its apps and sites will be free again. Past crossings stay in the ledger.</string>
+
+    <!-- Targets -->
+    <string name="targets_apps">Apps</string>
+    <string name="targets_sites">Sites</string>
+    <string name="targets_add_app">Add apps</string>
+    <string name="targets_not_installed">not on this phone</string>
+    <string name="targets_site_help">A site with its subdomains, or a part of it: youtube.com/shorts. Works in Chrome, Firefox, Samsung Internet, Yandex, Opera, Edge and Brave.</string>
+    <string name="picker_title">Apps</string>
+    <string name="picker_search">Search</string>
+    <string name="picker_loading">Looking through the apps…</string>
+
+    <!-- Gate -->
+    <string name="gate_title">Charon waits for the fare</string>
+    <string name="gate_over_title">The ferry turns back</string>
+    <string name="gate_broke_title">Your purse is empty</string>
+    <string name="gate_over_sub">The time you paid for is over. Charon will take you back to the shore, unless you pay again.</string>
+    <string name="gate_broke_sub">The meter took the last obol. Serve your patrons, or borrow from Hades if he still lends.</string>
+    <string name="gate_return">Back to the shore</string>
+    <string name="gate_pay_more">Pay again</string>
+    <string name="gate_back">Turn back</string>
+    <string name="gate_why">Why do you want to cross?</string>
+    <string name="why_bored">Just bored</string>
+    <string name="why_friend">To write to someone</string>
+    <string name="why_rest">Earned rest</string>
+    <string name="why_thing">I\'m looking for something</string>
+    <string name="gate_breathe">Breathe. Charon is in no hurry.</string>
+    <string name="gate_balance">In your purse: %1$s</string>
+    <string name="gate_price">A minute costs %1$s obol now</string>
+    <string name="gate_night">Nyx\'s hour: %1$s</string>
+    <string name="gate_morning">Early morning: %1$s</string>
+    <string name="gate_climb">Crossing number %1$d today: %2$s</string>
+    <string name="gate_refused">That fare is beyond your purse now.</string>
+    <string name="gate_meter">By the meter · %1$s a minute</string>
+    <string name="gate_pass">Hermes\' staff: 5 minutes free (%1$d left)</string>
+    <string name="gate_on_debt">partly on debt</string>
+    <string name="gate_debt_note">Hades lends up to %2$d obols at %1$d%%.</string>
+
+    <!-- Ledger -->
+    <string name="ledger_title">Ledger</string>
+    <string name="ledger_sub">Four weeks of service and forgetting.</string>
+    <string name="ledger_frieze">Frieze of four weeks</string>
+    <string name="ledger_lines">Every line</string>
+    <string name="ledger_debt">on debt</string>
+
+    <!-- Rite -->
+    <string name="rite_title">Rite</string>
+    <string name="rite_sub">Time away from the phone: a paper book, practice, a workout. Put the phone face down; the timer only runs while it lies there.</string>
+    <string name="rite_whom">For whom</string>
+    <string name="rite_length">How long</string>
+    <string name="rite_reward">Reward: %1$s</string>
+    <string name="rite_start">Begin</string>
+    <string name="rite_put_down">Put the phone face down to begin.</string>
+    <string name="rite_running">The rite is on. Don\'t touch the phone.</string>
+    <string name="rite_lifted">Put the phone back down: %1$d s before the rite breaks.</string>
+    <string name="rite_give_up">Give up</string>
+    <string name="rite_done_title">The rite is complete</string>
+    <string name="rite_done_sub">%1$s accepts the offering: %2$s obols.</string>
+    <string name="rite_broken_title">The rite is broken</string>
+    <string name="rite_broken_sub">The phone was picked up. No obols this time, but you can begin again.</string>
+    <string name="rite_again">Begin again</string>
+
+    <!-- Settings -->
+    <string name="settings_title">Settings</string>
+    <string name="settings_charon">Charon</string>
+    <string name="settings_charon_on">Charon is awake and watching</string>
+    <string name="settings_charon_off">Charon is asleep: nothing is counted</string>
+    <string name="settings_charon_open">Accessibility settings</string>
+    <string name="settings_autostart">On Xiaomi, Huawei and some other phones also allow autostart and turn off battery restrictions, or the system will put Charon to sleep.</string>
+    <string name="settings_app_info">App settings</string>
+    <string name="settings_idle">Stop counting after</string>
+    <string name="settings_idle_help">No touch or scroll for this long, and the patron stops counting.</string>
+    <string name="settings_seconds">%1$d s</string>
+    <string name="settings_tariffs">Tariffs</string>
+    <string name="settings_night">Nyx\'s hour</string>
+    <string name="settings_night_help">From %1$s to %2$s crossings cost more</string>
+    <string name="settings_night_from">Night starts</string>
+    <string name="settings_night_to">Night ends</string>
+    <string name="settings_multiplier">Multiplier</string>
+    <string name="settings_morning">Early morning</string>
+    <string name="settings_morning_help">From the end of the night to %1$s</string>
+    <string name="settings_morning_to">Morning ends</string>
+    <string name="settings_climb">Rising fare</string>
+    <string name="settings_climb_help">Each crossing after the first one today costs half as much again, up to ×3.</string>
+    <string name="settings_gate">The gate</string>
+    <string name="settings_ask_why">Ask why you cross</string>
+    <string name="settings_pause">Pause before paying</string>
+    <string name="settings_passes">Hermes\' staff a week</string>
+    <string name="settings_passes_help">Free 5-minute crossings for real business: a message, a link from a friend.</string>
+    <string name="settings_debt">Debt to Hades</string>
+    <string name="settings_debt_on">Hades lends</string>
+    <string name="settings_debt_help">When the purse is empty you can go below zero, with interest on the borrowed part.</string>
+    <string name="settings_debt_limit">Up to</string>
+    <string name="settings_debt_pct">Interest</string>
+    <string name="settings_look">Look</string>
+    <string name="theme_dark">Black-figure</string>
+    <string name="theme_light">Red-figure</string>
+    <string name="theme_system">Like the system</string>
+    <string name="settings_language">Language</string>
+    <string name="lang_system">System</string>
+    <string name="settings_about">Obol %1$s · part of Stillcraft · no ads, no account, works offline</string>
+
+    <plurals name="minutes">
+        <item quantity="one">%d min</item>
+        <item quantity="other">%d min</item>
+    </plurals>
+    <plurals name="obols">
+        <item quantity="one">%d obol</item>
+        <item quantity="other">%d obols</item>
+    </plurals>
+    <plurals name="obols_in_purse">
+        <item quantity="one">obol in your purse</item>
+        <item quantity="other">obols in your purse</item>
+    </plurals>
+    <plurals name="targets_count">
+        <item quantity="one">%d app or site</item>
+        <item quantity="other">%d apps and sites</item>
+    </plurals>
+    <plurals name="crossings">
+        <item quantity="one">%d crossing</item>
+        <item quantity="other">%d crossings</item>
+    </plurals>
+</resources>

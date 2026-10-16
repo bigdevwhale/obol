@@ -420,8 +420,53 @@ class CharonService : AccessibilityService() {
     }
 
     private fun turnBack() {
+        val browser = lastPkg?.takeIf { Browsers.isBrowser(it) }
         closeGate()
-        performGlobalAction(GLOBAL_ACTION_HOME)
+        if (browser == null) {
+            performGlobalAction(GLOBAL_ACTION_HOME)
+            return
+        }
+        // In a browser going home isn't enough: the forbidden tab would meet you at the gate
+        // the next time the browser opens. Send the tab itself back to the shore.
+        scope.launch {
+            if (!rewriteAddress(browser)) openShore(browser)
+        }
+    }
+
+    /** Types the shore's address into the browser's own bar, so the forbidden tab is replaced. */
+    private suspend fun rewriteAddress(pkg: String): Boolean {
+        if (android.os.Build.VERSION.SDK_INT < 30) return false
+        val bar = findUrlBar(pkg) ?: return false
+        bar.performAction(AccessibilityNodeInfo.ACTION_CLICK)
+        delay(350)
+        val field = rootInActiveWindow?.findFocus(AccessibilityNodeInfo.FOCUS_INPUT)?.takeIf { it.isEditable } ?: findUrlBar(pkg) ?: return false
+        val args = android.os.Bundle().apply {
+            putCharSequence(AccessibilityNodeInfo.ACTION_ARGUMENT_SET_TEXT_CHARSEQUENCE, SHORE_URL)
+        }
+        if (!field.performAction(AccessibilityNodeInfo.ACTION_SET_TEXT, args)) return false
+        delay(150)
+        if (!field.performAction(AccessibilityNodeInfo.AccessibilityAction.ACTION_IME_ENTER.id)) return false
+        delay(1200)
+        // Done only if the address really moved off the forbidden page.
+        val now = findUrlBar(pkg)?.text?.toString().orEmpty()
+        return now.contains("stillcraft") || now.contains("obol")
+    }
+
+    private fun findUrlBar(pkg: String): AccessibilityNodeInfo? {
+        val root = rootInActiveWindow ?: return null
+        return Browsers.urlBars(pkg).firstNotNullOfOrNull { id -> root.findAccessibilityNodeInfosByViewId("$pkg:id/$id").firstOrNull() }
+    }
+
+    /** Fallback: the shore page in the same browser, reusing the tab this app opened before. */
+    private fun openShore(pkg: String) {
+        runCatching {
+            startActivity(
+                android.content.Intent(android.content.Intent.ACTION_VIEW, android.net.Uri.parse(SHORE_URL))
+                    .setPackage(pkg)
+                    .putExtra(android.provider.Browser.EXTRA_APPLICATION_ID, packageName)
+                    .addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK),
+            )
+        }.onFailure { performGlobalAction(GLOBAL_ACTION_HOME) }
     }
 
     /** Silences the reel playing under the gate. */
@@ -442,6 +487,9 @@ class CharonService : AccessibilityService() {
 
     companion object {
         private const val TAG = "Charon"
+
+        /** Where a browser tab goes when you turn back from Lethe. */
+        const val SHORE_URL = "https://bigdevwhale.github.io/stillcraft/apps/obol/shore/"
         private val live = MutableStateFlow(Live())
         val state: StateFlow<Live> get() = live
 

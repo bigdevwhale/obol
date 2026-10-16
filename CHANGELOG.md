@@ -2,6 +2,11 @@
 
 All notable changes to Obol. Versions follow [semantic versioning](https://semver.org/).
 
+## [1.0.2] - 2026-10-17
+
+### Changed
+- In a browser, turning back sends the tab itself to a quiet shore page instead of just going home, so the forbidden tab doesn't meet you at the gate the next time the browser opens.
+
 ## [1.0.1] - 2026-10-16
 
 ### Fixed

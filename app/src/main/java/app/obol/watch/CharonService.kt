@@ -78,11 +78,11 @@ class CharonService : AccessibilityService() {
     private lateinit var badge: OverlayHost
     private lateinit var mist: OverlayHost
     private val mistLevel = mutableStateOf(0f)
-    private var islandWorks = false
     /** Seconds on the far shore today, for the mist; -1 until loaded. */
     private var shoreToday = -1
     private var shoreDay = 0L
     private var patronIds: List<Long> = emptyList()
+    private var demoPatron: Long? = null
     private lateinit var bank: Bank
 
     private var rules = Rules(emptyList(), emptyList(), emptyList())
@@ -100,7 +100,6 @@ class CharonService : AccessibilityService() {
     private var focus: AudioFocusRequest? = null
     private var tickNo = 0L
     private var lastMatch: Match = Match.None
-    private var islandFor = 0L
     private var balance = 0L
     private val badgeData = mutableStateOf<Pair<Crossing, Long>?>(null)
 
@@ -121,6 +120,7 @@ class CharonService : AccessibilityService() {
             badge.destroy()
             mist.destroy()
         }
+        stayAwake()
         val c = applicationContext.container
         bank = Bank(c.dao)
         // Overlays and notifications speak the language chosen in the app, not the phone's.
@@ -129,11 +129,11 @@ class CharonService : AccessibilityService() {
         gate = OverlayHost(ui, blocking = true, wm = wm)
         badge = OverlayHost(ui, blocking = false, wm = wm)
         mist = OverlayHost(ui, blocking = false, veil = true, wm = wm)
-        islandWorks = Island.works(this)
         lastActivity = System.currentTimeMillis()
         scope.launch {
             combine(c.dao.observePatrons(), c.dao.observeStreams(), c.dao.observeTargets()) { p, s, t ->
                 patronIds = p.filter { it.active }.map { it.id }
+                demoPatron = p.firstOrNull { it.preset == "athena" }?.id
                 Rules(p, s, t)
             }.collect { rules = it }
         }
@@ -165,6 +165,18 @@ class CharonService : AccessibilityService() {
 
     override fun onInterrupt() = Unit
 
+    /** Foreground with a quiet notice: without it HyperOS freezes the process whenever a feed is open. */
+    private fun stayAwake() {
+        runCatching {
+            val n = Notices.watch(Lang.wrap(this))
+            if (android.os.Build.VERSION.SDK_INT >= 34) {
+                startForeground(Notices.WATCH_ID, n, android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE)
+            } else {
+                startForeground(Notices.WATCH_ID, n)
+            }
+        }.onFailure { Log.w(TAG, "foreground", it) }
+    }
+
     override fun onDestroy() {
         // The service scope dies below; the app's scope outlives it long enough to save the last seconds.
         applicationContext.container.scope.launch(Dispatchers.Main) { flushEarn() }
@@ -174,7 +186,7 @@ class CharonService : AccessibilityService() {
             badge.destroy()
             mist.destroy()
         }
-        Island.hide(this)
+        runCatching { stopForeground(STOP_FOREGROUND_REMOVE) }
         releaseFocus()
         scope.cancel()
         super.onDestroy()
@@ -278,7 +290,11 @@ class CharonService : AccessibilityService() {
         r.flushed = r.seconds
     }
 
-    private fun blessing(): Blessing? = if (settings.oracleOn) Oracle.blessing(Clock.day(), patronIds) else null
+    private fun blessing(): Blessing? = when {
+        !settings.oracleOn -> null
+        BuildConfig.DEMO -> demoPatron?.let { Oracle.demo(it, Clock.minuteOfDay()) }
+        else -> Oracle.blessing(Clock.day(), patronIds)
+    }
 
     /** Once a day, when the blessing begins, the oracle speaks. */
     private suspend fun tellOracle() {
@@ -286,8 +302,8 @@ class CharonService : AccessibilityService() {
         val today = Clock.day()
         if (settings.oracleTold == today || !b.active(Clock.minuteOfDay())) return
         val patron = rules.patron(b.patronId) ?: return
-        applicationContext.container.settings.update { it.copy(oracleTold = today) }
-        Oracles.tell(Lang.wrap(this), patron, b)
+        // Only once it was heard: with notifications off the oracle tries again next time.
+        if (Oracles.tell(Lang.wrap(this), patron, b)) applicationContext.container.settings.update { it.copy(oracleTold = today) }
     }
 
     // Lethe
@@ -334,15 +350,9 @@ class CharonService : AccessibilityService() {
         open[stream.id] = c
         if (c.usedSec % 10 == 0) save(c)
         badgeData.value = c to balance
-        val wantBadge = settings.badgeOn && !islandWorks
-        if (wantBadge && !badge.showing) badge.show { badgeData.value?.let { (cr, bal) -> Badge(cr, bal) } }
-        if (!wantBadge) badge.hide()
+        if (settings.badgeOn && !badge.showing) badge.show { badgeData.value?.let { (cr, bal) -> Badge(cr, bal) } }
+        if (!settings.badgeOn) badge.hide()
         veil()
-        // The island counts down by itself; a refresh now and then keeps it honest.
-        if (islandFor != c.id || c.usedSec % 15 == 0) {
-            Island.show(Lang.wrap(this), stream.name, c, balance)
-            islandFor = c.id
-        }
     }
 
     private suspend fun save(c: Crossing) {
@@ -368,20 +378,18 @@ class CharonService : AccessibilityService() {
             shoreDay = today
         }
         shoreToday++
-        val level = if (settings.mistOn) ((shoreToday - 300) / 1200f).coerceIn(0f, 1f) else 0f
+        // Noticeable from the first moment, thickest after twenty-five minutes.
+        val progress = ((shoreToday - 300) / 1200f).coerceIn(0f, 1f)
+        val level = if (settings.mistOn && shoreToday > 300) 0.55f + 0.45f * progress else 0f
         mistLevel.value = level
         if (level > 0f && !mist.showing) mist.show { Mist(mistLevel.value) }
         if (level == 0f) mist.hide()
     }
 
-    /** Off the far shore: the badge, the mist and the island go, the prepaid time waits. */
+    /** Off the far shore: the badge and the mist go, the prepaid time waits. */
     private fun leaveShore() {
         badge.hide()
         mist.hide()
-        if (islandFor != 0L) {
-            Island.hide(this)
-            islandFor = 0L
-        }
     }
 
     private fun openGate(state: GateState) {

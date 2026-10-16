@@ -89,6 +89,9 @@ data class Blessing(val patronId: Long, val from: Int, val to: Int) {
 }
 
 object Oracle {
+    /** The demo build always catches Athena's blessing in progress, in the app and in Charon alike. */
+    fun demo(patronId: Long, minuteOfDay: Int) = Blessing(patronId, minuteOfDay - 40, minuteOfDay + 80)
+
     /** The same answer all day long, a different one each day. */
     fun blessing(day: Long, patronIds: List<Long>): Blessing? {
         if (patronIds.isEmpty()) return null

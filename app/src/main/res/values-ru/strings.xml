@@ -205,13 +205,8 @@
     <string name="lang_system">Системный</string>
     <string name="settings_about">Обол %1$s · часть Stillcraft · без рекламы и аккаунта, работает офлайн</string>
 
-    <!-- Island -->
-    <string name="channel_crossing">На том берегу</string>
-    <string name="channel_crossing_desc">Сколько осталось от оплаченной переправы: в строке состояния и в острове.</string>
-    <string name="island_left">%1$s на том берегу</string>
-    <string name="island_meter">По счётчику: %1$s в минуту · в кошеле %2$s</string>
     <string name="settings_badge">Плашка с таймером поверх приложений</string>
-    <string name="settings_badge_help">Уведомление с остатком времени показывается всё равно; на Xiaomi оно живёт в Super Island.</string>
+    <string name="settings_badge_help">Маленькая плашка в углу с остатком времени или счётчиком, пока ты на том берегу.</string>
 
     <!-- Temple, oracle, mist, oath, widget -->
     <string name="channel_oracle">Оракул</string>
@@ -222,7 +217,7 @@
     <string name="oracle_later">%1$s будет платить вдвойне с %2$s до %3$s.</string>
     <string name="oracle_past">Двойные часы покровителя %1$s на сегодня закончились.</string>
     <string name="styx_warning">Ты поклялся Стиксом до %1$s. Нарушенная клятва останется в истории.</string>
-    <string name="styx_explanation">Пока клятва в силе, Обол нельзя удалить. Других прав Обол не просит.</string>
+    <string name="styx_explanation">Пока клятва в силе, чтобы удалить Обол, сначала придётся забрать у него эти права, а это нарушит клятву. Других прав Обол не просит.</string>
     <string name="widget_name">Кошель</string>
     <string name="widget_desc">Оболы в кошеле и сколько отдано и забрано сегодня.</string>
     <string name="widget_today">сегодня +%1$s · −%2$s</string>
@@ -267,7 +262,7 @@
     <string name="settings_mist_help">После пяти минут на том берегу с краёв экрана наползает серая дымка.</string>
     <string name="settings_interest">Проценты сокровищницы в неделю</string>
     <string name="settings_oath">Клятва Стиксом</string>
-    <string name="settings_oath_help">Нерушимая клятва богов. Обол нельзя удалить, тарифы и ворота заперты, потоки могут только дорожать. Нарушить можно, но это останется в истории.</string>
+    <string name="settings_oath_help">Нерушимая клятва богов. Тарифы и ворота заперты, потоки могут только дорожать, а Обол становится администратором устройства: чтобы удалить его, придётся пройти лишние экраны и нарушить клятву, а это останется в истории.</string>
     <string name="settings_oath_swear">Поклясться Стиксом</string>
     <string name="settings_oath_until">Клятва до %1$s</string>
     <string name="settings_oath_holding">Клятва закончится сама.</string>
@@ -277,6 +272,13 @@
     <string name="dur_min">%1$d мин</string>
     <string name="dur_h">%1$d ч</string>
     <string name="dur_hm">%1$d ч %2$d мин</string>
+    <string name="settings_widget_add">Положить кошель на главный экран</string>
+    <string name="settings_widget_manual">Твой лаунчер не умеет добавлять виджеты из приложения: зажми пустое место на главном экране и найди Обол среди виджетов.</string>
+    <string name="settings_widget_xiaomi">Если кошель не появился, разреши Оболу «Ярлыки на рабочем столе» в настройках приложения и попробуй снова или добавь его из списка виджетов.</string>
+    <string name="channel_watch">Харон на посту</string>
+    <string name="channel_watch_desc">Тихое уведомление, без которого система замораживает Харона, пока открыта лента. Его можно скрыть.</string>
+    <string name="watch_title">Харон на посту</string>
+    <string name="watch_text">Считает служение покровителям и охраняет Лету</string>
     <plurals name="minutes">
         <item quantity="one">%d мин</item>
         <item quantity="few">%d мин</item>

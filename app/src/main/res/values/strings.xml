@@ -205,13 +205,8 @@
     <string name="lang_system">System</string>
     <string name="settings_about">Obol %1$s · part of Stillcraft · no ads, no account, works offline</string>
 
-    <!-- Island -->
-    <string name="channel_crossing">On the far shore</string>
-    <string name="channel_crossing_desc">The time left of a paid crossing, in the status bar and the island.</string>
-    <string name="island_left">%1$s on the far shore</string>
-    <string name="island_meter">By the meter: %1$s a minute · %2$s in the purse</string>
     <string name="settings_badge">Timer plaque over apps</string>
-    <string name="settings_badge_help">The notification with the time left shows anyway; on Xiaomi it lives in the Super Island.</string>
+    <string name="settings_badge_help">A small plaque in the corner with the time left or the meter, while you\'re on the far shore.</string>
 
     <!-- Temple, oracle, mist, oath, widget -->
     <string name="channel_oracle">The oracle</string>
@@ -222,7 +217,7 @@
     <string name="oracle_later">%1$s will pay double from %2$s to %3$s.</string>
     <string name="oracle_past">The double hours of %1$s are over for today.</string>
     <string name="styx_warning">You swore by the Styx until %1$s. Breaking the oath stays on record.</string>
-    <string name="styx_explanation">While the oath holds, Obol can\'t be uninstalled. Obol asks for no other rights.</string>
+    <string name="styx_explanation">While the oath holds, uninstalling Obol first means taking these rights back, and that breaks the oath. Obol asks for no other rights.</string>
     <string name="widget_name">Purse</string>
     <string name="widget_desc">Obols in your purse and today\'s given and taken.</string>
     <string name="widget_today">today +%1$s · −%2$s</string>
@@ -267,7 +262,7 @@
     <string name="settings_mist_help">After five minutes on the far shore a grey haze creeps in from the edges of the screen.</string>
     <string name="settings_interest">Treasury interest a week</string>
     <string name="settings_oath">Oath by the Styx</string>
-    <string name="settings_oath_help">The unbreakable oath of the gods. Obol can\'t be uninstalled, tariffs and the gate are locked, streams can only get dearer. Breaking it is possible, but stays on record.</string>
+    <string name="settings_oath_help">The unbreakable oath of the gods. Tariffs and the gate lock, streams can only get dearer, and Obol becomes a device administrator: removing it takes a few extra screens and breaks the oath, which stays on record.</string>
     <string name="settings_oath_swear">Swear by the Styx</string>
     <string name="settings_oath_until">Sworn until %1$s</string>
     <string name="settings_oath_holding">The oath ends by itself.</string>
@@ -277,6 +272,13 @@
     <string name="dur_min">%1$d min</string>
     <string name="dur_h">%1$d h</string>
     <string name="dur_hm">%1$d h %2$d min</string>
+    <string name="settings_widget_add">Put the purse on the home screen</string>
+    <string name="settings_widget_manual">Your launcher can\'t add widgets from an app: long-press the home screen and find Obol in the widgets.</string>
+    <string name="settings_widget_xiaomi">If the purse didn\'t appear, allow \"Home screen shortcuts\" for Obol in its app settings and try again, or add it from the widgets list.</string>
+    <string name="channel_watch">Charon on watch</string>
+    <string name="channel_watch_desc">A quiet notice that keeps Charon awake; without it the system freezes him while a feed is open. You can hide it.</string>
+    <string name="watch_title">Charon is on watch</string>
+    <string name="watch_text">Counting service to your patrons and guarding Lethe</string>
     <plurals name="minutes">
         <item quantity="one">%d min</item>
         <item quantity="other">%d min</item>

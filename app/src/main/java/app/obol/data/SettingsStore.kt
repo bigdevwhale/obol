@@ -44,7 +44,7 @@ data class Settings(
     /** No touch or scroll for this long and the patron stops counting. */
     val idleSec: Int = 90,
     val haptics: Boolean = true,
-    /** The timer plaque drawn over other apps; the notification island shows it anyway. */
+    /** The plaque with the time left, drawn in the corner over other apps. */
     val badgeOn: Boolean = true,
     /** The oracle names a patron who pays double for two hours each day. */
     val oracleOn: Boolean = true,

@@ -3,8 +3,10 @@
 
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
-    <!-- Android 16 Live Updates: the crossing's countdown as a status bar chip. -->
-    <uses-permission android:name="android.permission.POST_PROMOTED_NOTIFICATIONS" />
+    <!-- Charon stays in the foreground: HyperOS and others freeze a background process even with
+         an accessibility service bound, and a frozen Charon can't stand at the gate. -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
 
     <!-- Lists launchable apps for the app picker. -->
     <queries>
@@ -38,6 +40,7 @@
         <service
             android:name=".watch.CharonService"
             android:exported="false"
+            android:foregroundServiceType="specialUse"
             android:label="@string/charon_service_label"
             android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
             <intent-filter>
@@ -46,6 +49,9 @@
             <meta-data
                 android:name="android.accessibilityservice"
                 android:resource="@xml/charon" />
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="Keeps the screen-time gate responsive while other apps are in front" />
         </service>
 
         <!-- The oath by the Styx: device administrator only while an oath holds, so Obol can't be uninstalled. -->

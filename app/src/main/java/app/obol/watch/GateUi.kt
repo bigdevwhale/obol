@@ -332,16 +332,18 @@ fun Mist(level: Float) = ObolTheme(dark = true) {
     val mist = U.c.lethe
     val alpha by animateFloatAsState(level, tween(1500), label = "mist")
     Canvas(Modifier.fillMaxSize()) {
-        val r = maxOf(size.width, size.height) * 0.75f
+        // The gradient reaches exactly to the corners, so the haze always shows at the edges.
+        val r = kotlin.math.hypot(size.width / 2, size.height / 2)
         drawRect(
             androidx.compose.ui.graphics.Brush.radialGradient(
                 0f to androidx.compose.ui.graphics.Color.Transparent,
-                (0.75f - 0.25f * alpha) to androidx.compose.ui.graphics.Color.Transparent,
-                1f to mist.copy(alpha = 0.85f * alpha),
+                (0.55f - 0.3f * alpha) to androidx.compose.ui.graphics.Color.Transparent,
+                0.85f to mist.copy(alpha = 0.55f * alpha),
+                1f to mist.copy(alpha = 0.95f * alpha),
                 center = center,
                 radius = r,
             ),
         )
-        drawRect(mist.copy(alpha = 0.12f * alpha))
+        drawRect(mist.copy(alpha = 0.18f * alpha))
     }
 }

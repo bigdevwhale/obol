@@ -122,10 +122,10 @@ fun ObolRoot(settings: Settings) {
         OData(patrons, streams, targets, balance, settings, day, charon)
     }
 
-    // The crossing's countdown lives in a notification (the island on Xiaomi).
+    // Charon's quiet notice and the oracle need notifications.
     val askNotify = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { }
     LaunchedEffect(settings.onboarded) {
-        if (settings.onboarded && !app.obol.watch.Island.canPost(context) && android.os.Build.VERSION.SDK_INT >= 33 && !app.obol.BuildConfig.DEMO) {
+        if (settings.onboarded && !app.obol.watch.Notices.canPost(context) && android.os.Build.VERSION.SDK_INT >= 33 && !app.obol.BuildConfig.DEMO) {
             askNotify.launch(android.Manifest.permission.POST_NOTIFICATIONS)
         }
     }

@@ -36,7 +36,7 @@ Obol makes every crossing cost something and pays you for time spent on what mat
 | 🏛️ | **Pantheon** | Patrons of useful time: Calliope (reading), Hermes (languages), Athena (learning), Hestia (meditation), Nike (sport). Dedicate your own to anything (guitar, code, a side project) with a name, a symbol, a glaze, a rate, a daily cap, apps and sites. Patrons stand on pedestals that grow with the hours you give them, and crack when you forget them for a week. |
 | 🌊 | **Lethe** | Streams that cost obols: Instagram, TikTok, YouTube Shorts, VK, Reddit, X, or anything you add, apps and sites alike (`youtube.com/shorts` works in browsers). **Only the endless feed** makes Reels and Shorts paid while messages and the rest of the app stay free. |
 | ⛵ | **Charon's gate** | Opening a stream brings up the gate: why do you want to cross, a few breaths, then 5, 15 or 30 minutes, the meter, or a free pass from Hermes' staff. The reel underneath is paused. Turning back is always free. |
-| ⏳ | **The island** | While you're on the far shore, the time left counts down in a notification. On Xiaomi it lives in the Super Island around the camera; on Android 16 it's a Live Update chip; elsewhere a small plaque sits in the corner. |
+| ⏳ | **The plaque** | While you're on the far shore, a small plaque in the corner counts down the time you paid for, or shows the meter. |
 | 🌙 | **Tariffs** | Nyx's hour (night ×3), the early morning ×2, and a fare that rises with every crossing after the first one today. |
 | ⚖️ | **Debt to Hades** | An empty purse can go below zero, with interest on the borrowed part. |
 | 🌫️ | **Mist of Lethe** | After five minutes on the far shore a grey haze creeps in from the edges of the screen, thickest after twenty-five. |
@@ -44,7 +44,7 @@ Obol makes every crossing cost something and pays you for time spent on what mat
 | 🏺 | **Temple** | A treasury out of Charon's reach that grows 5 % every Monday, and vows: real rewards (a cinema, a book) saved up for in obols. |
 | 🕯️ | **Rites** | Time away from the phone (a paper book, practice, a workout) by a timer that only runs while the phone lies face down. |
 | 📜 | **Ledger** | A potsherd for every day with the reasons you gave Charon, a four-week frieze, and an evening question: what do you remember from the far shore? Days with nothing count as taken by Lethe without a trace. |
-| ⚔️ | **Oath by the Styx** | Swear for 1, 3, 7 or 30 days: Obol can't be uninstalled, tariffs and the gate are locked, streams can only get dearer. Breaking the oath is possible, but it stays on record. |
+| ⚔️ | **Oath by the Styx** | Swear for 1, 3, 7 or 30 days: tariffs and the gate lock, streams can only get dearer, and Obol becomes a device administrator, so removing it takes extra screens. Breaking the oath is possible, but it stays on record. |
 | 💰 | **Widget** | The purse on the home screen with today's given and taken. |
 
 <table>
@@ -74,6 +74,8 @@ Get the APK from **[Releases](https://github.com/bigdevwhale/obol/releases/lates
 
 > [!TIP]
 > On Xiaomi (MIUI / HyperOS), Huawei and some other phones, allow **Autostart** and remove battery limits, or the system will put Charon to sleep.
+>
+> Charon keeps a quiet notification, "Charon is on watch". Without it HyperOS freezes the app while a feed is open. You can hide the notification in the system settings; Charon keeps working.
 
 ## Privacy
 
@@ -93,7 +95,7 @@ Every screen is written natively in both languages. Switch in **Settings → Lan
 app/src/main/java/app/obol/
 ├── data/        Room database, settings, presets, demo seed
 ├── domain/      tariffs, rules, bank, temple, oracle
-├── watch/       Charon (accessibility service), the gate, the island, the mist, the oath
+├── watch/       Charon (accessibility service), the gate, the plaque, the mist, the oath
 ├── widget/      the purse on the home screen
 └── ui/          shore, pantheon, Lethe, ledger, temple, rite, settings
 ```

@@ -6,7 +6,8 @@
     android:background="@drawable/widget_bg"
     android:gravity="center_vertical"
     android:orientation="horizontal"
-    android:padding="14dp">
+    android:paddingHorizontal="14dp"
+    android:paddingVertical="8dp">
 
     <ImageView
         android:layout_width="40dp"
@@ -27,7 +28,8 @@
             android:layout_height="wrap_content"
             android:fontFamily="@font/forum_regular"
             android:textColor="#F1E6D4"
-            android:textSize="30sp" />
+            android:includeFontPadding="false"
+            android:textSize="28sp" />
 
         <TextView
             android:id="@+id/today"
@@ -35,6 +37,7 @@
             android:layout_height="wrap_content"
             android:fontFamily="@font/alegreyasans_regular"
             android:maxLines="1"
+            android:includeFontPadding="false"
             android:textColor="#BCA88F"
             android:textSize="13sp" />
     </LinearLayout>

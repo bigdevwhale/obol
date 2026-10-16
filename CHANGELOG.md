@@ -2,6 +2,19 @@
 
 All notable changes to Obol. Versions follow [semantic versioning](https://semver.org/).
 
+## [1.0.1] - 2026-10-16
+
+### Fixed
+- Charon stopped at the gate on Xiaomi phones: HyperOS froze the app as soon as a feed was open. Charon now stays in the foreground with a quiet "Charon is on watch" notification.
+- The oracle tries again later when notifications are off, instead of staying silent for the rest of the day.
+- The oath by the Styx described itself as making Obol impossible to uninstall. It doesn't: removing Obol takes extra screens and breaks the oath, which stays on record. The text now says so.
+- The purse widget no longer cuts off its second line.
+
+### Changed
+- The time left lives on the plaque in the corner; the Super Island countdown is gone.
+- The mist of Lethe is noticeable from its first minute.
+- Settings can put the purse widget on the home screen.
+
 ## [1.0.0] - 2026-10-16
 
 The first release.

@@ -163,7 +163,7 @@ fun ShoreTab(data: OData, go: Go) {
         if (data.settings.oracleOn) {
             val b = remember(data.day, data.patrons) {
                 // The demo always catches a blessing in progress, for the screenshots.
-                if (app.obol.BuildConfig.DEMO) data.patrons.firstOrNull { it.preset == "athena" }?.let { app.obol.domain.Blessing(it.id, Clock.minuteOfDay() - 40, Clock.minuteOfDay() + 80) }
+                if (app.obol.BuildConfig.DEMO) data.patrons.firstOrNull { it.preset == "athena" }?.let { Oracle.demo(it.id, Clock.minuteOfDay()) }
                 else Oracle.blessing(data.day, data.patrons.filter { it.active }.map { it.id })
             }
             val p = data.patron(b?.patronId)

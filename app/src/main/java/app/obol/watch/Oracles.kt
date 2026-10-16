@@ -18,8 +18,9 @@ object Oracles {
     private const val CHANNEL = "oracle"
     private const val ID = 9
 
-    fun tell(context: Context, patron: Patron, b: Blessing) {
-        if (!Island.canPost(context)) return
+    /** Returns whether the oracle could speak (notifications may be off). */
+    fun tell(context: Context, patron: Patron, b: Blessing): Boolean {
+        if (!Notices.canPost(context)) return false
         val nm = context.getSystemService(NotificationManager::class.java)
         if (nm.getNotificationChannel(CHANNEL) == null) {
             nm.createNotificationChannel(
@@ -39,6 +40,6 @@ object Oracles {
             .setContentIntent(open)
             .setAutoCancel(true)
             .build()
-        runCatching { nm.notify(ID, n) }
+        return runCatching { nm.notify(ID, n) }.isSuccess
     }
 }

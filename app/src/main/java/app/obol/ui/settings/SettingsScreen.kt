@@ -148,6 +148,19 @@ fun SettingsScreen(data: OData, go: Go) {
             // The oath by the Styx
             Section(stringResource(R.string.settings_oath)) { Oath(s) { change -> set(change) } }
 
+            Section(stringResource(R.string.widget_name)) {
+                Text(stringResource(R.string.widget_desc), style = UType.Muted)
+                Gap(10.dp)
+                GhostButton(stringResource(R.string.settings_widget_add), Modifier.fillMaxWidth()) {
+                    val asked = app.obol.widget.PurseWidget.pin(context)
+                    // HyperOS ignores the request unless "Home screen shortcuts" is allowed for the app.
+                    val xiaomi = android.os.Build.MANUFACTURER.equals("Xiaomi", ignoreCase = true)
+                    if (!asked || xiaomi) {
+                        android.widget.Toast.makeText(context, if (asked) R.string.settings_widget_xiaomi else R.string.settings_widget_manual, android.widget.Toast.LENGTH_LONG).show()
+                    }
+                }
+            }
+
             Section(stringResource(R.string.settings_look)) {
                 FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     Chip(stringResource(R.string.theme_dark), s.theme == ThemeMode.DARK) { set { it.copy(theme = ThemeMode.DARK) } }

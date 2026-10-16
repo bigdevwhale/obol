@@ -28,6 +28,13 @@ class PurseWidget : AppWidgetProvider() {
     }
 
     companion object {
+        /** Asks the launcher to place the widget; false when the launcher can't. */
+        fun pin(context: Context): Boolean {
+            val manager = AppWidgetManager.getInstance(context)
+            if (!manager.isRequestPinAppWidgetSupported) return false
+            return manager.requestPinAppWidget(ComponentName(context, PurseWidget::class.java), null, null)
+        }
+
         suspend fun refresh(context: Context) {
             val manager = AppWidgetManager.getInstance(context)
             val ids = manager.getAppWidgetIds(ComponentName(context, PurseWidget::class.java))

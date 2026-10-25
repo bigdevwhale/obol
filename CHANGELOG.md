@@ -8,6 +8,13 @@ then close it like any HTML comment. The release notes carry it, and the chat bo
 
 All notable changes to Obol. Versions follow [semantic versioning](https://semver.org/).
 
+## [1.0.3] - 2026-10-25
+
+### Added
+- Community links in settings: report a bug, suggest an idea or follow updates through the StillCraft bot on Telegram, and the StillCraft chat.
+
+<!-- tg skip -->
+
 ## [1.0.2] - 2026-10-17
 
 ### Changed

@@ -38,6 +38,7 @@ import app.obol.ui.Go
 import app.obol.ui.OData
 import app.obol.ui.components.Card
 import app.obol.ui.components.Chip
+import app.obol.ui.components.CommunityLinks
 import app.obol.ui.components.Eyebrow
 import app.obol.ui.components.Fmt
 import app.obol.ui.components.Gap
@@ -177,6 +178,8 @@ fun SettingsScreen(data: OData, go: Go) {
                     Chip("Русский", current.startsWith("ru")) { AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags("ru")) }
                 }
             }
+
+            CommunityLinks()
 
             Gap(10.dp)
             Text(stringResource(R.string.settings_about, BuildConfig.VERSION_NAME), style = UType.Small, modifier = Modifier.padding(horizontal = 4.dp))
